@@ -1,6 +1,6 @@
 [![mirror](https://img.shields.io/badge/mirror-github-blue)](https://github.com/neilg63/simple-string-patterns)
-[![crates.io](https://img.shields.io/crates/v/string-patterns.svg)](https://crates.io/crates/simple-string-patterns)
-[![docs.rs](https://docs.rs/string-patterns/badge.svg)](https://docs.rs/simple-string-patterns)
+[![crates.io](https://img.shields.io/crates/v/simple-string-patterns.svg)](https://crates.io/crates/simple-string-patterns)
+[![docs.rs](https://docs.rs/simple-string-patterns/badge.svg)](https://docs.rs/simple-string-patterns)
 
 # Simple String Patterns
 
