@@ -1,0 +1,15 @@
+mod utils;
+pub mod enums;
+pub mod alphanumeric;
+pub mod segments;
+pub mod simple_match;
+
+/// This library provides a set of traits and extension methods for &str and/or String
+/// to facilitate common string manipulations routines that may otherwise require multiple steps
+/// Some methods have variants with a case_insensitive flag and without (_ci and _cs).
+/// Always consider the simplest strategy for extracting text, e.g. via to_head_tail(), to_segments().
+
+pub use crate::enums::*;
+pub use crate::alphanumeric::*;
+pub use crate::segments::*;
+pub use crate::simple_match::*;
