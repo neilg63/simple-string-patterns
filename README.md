@@ -36,32 +36,21 @@ if str_1.contains_ci_alphanum("hiphop") {
 }
 ```
 
-##### Extract the first match from a string
+##### Filter a vector of strings by their first alphanumeric characters
 ```rust
-let str_1 = "The park has many lions, spotted hyenas, leopards, rhinoceroses, hippopotamuses, giraffes, cheetahs and baboons";
-if let Some(matched_item) = str_1.pattern_first_match(r#"\bspotted\s+\w+\b"#, true) {
-  println!("`{}` occurs between positions {} and {}", matched_item.as_str(), matched_item.start(), matched_item.end());
-}
-```
-
-##### Match within an array of strings
-```rust
+// Methods ending in _alphanum are good filtering strings that may have other
+// to strings() converts as an array of &str references to a vector of strings
 let sample_strs = [
-  "pictures_Italy-1997",
-  "photos-portugal-2001",
-  "imagini-italia_2002",
-  "images-france-2003",
-];
-let test_pattern = r#"[^a-z]ital(y|ia)"#; // matches 'italy' or 'italia'
-// The regular expression will only be compiled once
-if sample_strs.pattern_match_ci(test_pattern) {
-  println!("Some of these folders are related to Italy");
-}
-
-// Filter the above array
-let filtered_strs = sample_strs.pattern_matches_filtered_ci(test_pattern);
-// should yield ["pictures_Italy-1997","imagini-italia_2002"]
+  "/blue-sky.jpg",
+  "----bluesky.png",
+  "-B-l-u-e--sky",
+  "Blueberry",
+  " Blues sky thinking"
+].to_strings();
+let strings_starting_with_blue = sample_strs.into_iter().filter(|s| s.starts_with_ci_alphanum("bluesky")).collect::<Vec<String>>();
+// should return all except "Blueberry"
 ```
+
 
 ##### Extract the third non-empty segment of a long path name
 ```rust
@@ -79,6 +68,16 @@ println!("Head: {}, tail: {}", head, tail); // Head: long, tail: list-of-technic
 
 let (start, end) = test_string.to_start_end("-");
 println!("Start: {}, end: {}", start, end); // Start: long-list-of-technical, end: words
+```
+
+
+##### Capture an inner segment via multiple patterns
+```rust
+let source_str = "long/path/with-a-long-title/details";
+  let target_str = "long";
+  if let Some(inner_segment) = source_str.to_inner_segment(&[("/", 2), ("-", 2)]) { 
+    println!("The inner segment between 'a' and 'title' is: '{}'", inner_segment); // should read 'long'
+  }
 ```
 
 ##### Extract the first decimal value as an f64 from a longer string
@@ -107,20 +106,6 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
   }
 ```
 
-##### Extract three float values from a longer string
-```rust
-
-let input_str = "-78.29826, 34.15 160.9";
-// the pattern expects valid decimal numbers separated by commas and/or one or more spaces
-let split_pattern = r#"(\s*,\s*|\s+)"#;
-
-let numbers: Vec<f64> = input_str.pattern_split_cs(split_pattern)
-    .into_iter().map(|s| s.to_first_number::<f64>())
-    .filter(|nr| nr.is_some())
-    .map(|s| s.unwrap()).collect();
-// yields a vector of three f64 numbers [-78.29826, 34.15, 160.9];
-```
-
 ##### Match multiple patterns without regular expressions
 ```rust
 // Match only file names that contain the character sequence "nepal" and do not end in .psd 
@@ -142,17 +127,6 @@ let numbers: Vec<f64> = input_str.pattern_split_cs(split_pattern)
   
   let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_conditions);
   /// should yield two file names: ["photo_Nepal_Jan-2005.jpg", "pic_nepal_Dec-2004.png"]
-```
-
-
-##### Test the proximity of two words.
-NB: This will be moved to another crate in future versions. The functionality can be reproduced from **String.pattern_captures()**.
-```rust
-let source_str = "Lions are unique among cats in that they live in a group or pride.";
-// Do the words 'lion(s)' and 'cat(s)' occur within 20 characters of each other?
-if source_str.match_words_by_proximity("lions?", "cats?", -20, 20, true) {
-  println!("This sentence mentions lions in the context of cats");
-}
 ```
 
 ### Traits

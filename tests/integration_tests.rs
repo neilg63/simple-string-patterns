@@ -52,7 +52,7 @@ fn test_to_string_vector() {
 
 #[test]
 fn test_to_segments() {
-  let path_string = "/var/www/mysite.com/web/uploads/".to_string();
+  let path_string = "/var/www/mysite.com/web/uploads/";
   // should extract only non-empty segments
   let segments = path_string.to_segments("/"); 
   let expected_segments = ["var", "www", "mysite.com", "web", "uploads"].to_strings();
@@ -65,17 +65,17 @@ fn test_to_segments() {
 
 #[test]
 fn test_to_tail() {
-  let source_str = "long/path/with-a-long-title/details".to_string();
+  let source_str = "long/path/with-a-long-title/details";
   let target_str = "long".to_string();
   assert_eq!(source_str.to_inner_segment(&[("/", 2), ("-", 2)]), Some(target_str) );
 }
 
 #[test]
 fn test_to_inner_segment() {
-  let source_str = "long/path/with-a-long-title/details".to_string();
+  let source_str = "long/path/with-a-long-title/details";
   let target_str = "long".to_string();
   assert_eq!(source_str.to_inner_segment(&[("/", 2), ("-", 2)]), Some(target_str) );
-  let source_str2 = "complex/pattern/with-many-nested|embedded-words".to_string();
+  let source_str2 = "complex/pattern/with-many-nested|embedded-words";
   let target_str2 = "embedded".to_string();
   let pairs = [("/", 2), ("-", 2), ("|", 1)];
   assert_eq!(source_str2.to_inner_segment(&pairs), Some(target_str2) );
