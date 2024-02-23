@@ -15,9 +15,6 @@ This library makes it easier to match, split and extract strings in Rust. It bui
 - Methods containing *segment(s)* ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
 - In tuples returned from *segment(s)* and *part(s)* methods, *head* means the segment before the first split and tail the remainder, while *start* means the whole string before the last split and *end* only the last part of the last matched separator.
 
-Version 0.2.0 introduced additional methods to capture and count matched strings with offsets and version 0.2.5 added methods to match, replace, capture and count words without intrusive word boundary anchors.
-
-
 ##### Simple case-insensitive match
 ```rust
 let str_1 = "Dog food";
@@ -151,4 +148,4 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
   - ContainsCs(&str, bool) case-sensitive *contains* + is_positive flag
 
 ### Dev Notes
-This crate is still in its alpha stage and serves as a building block for other crates as well as to supplement a future version of *string-patterns*.
+This crate is still in its alpha stage and serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
