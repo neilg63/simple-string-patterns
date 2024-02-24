@@ -14,8 +14,8 @@ This library makes it easier to match, split and extract strings in Rust. It bui
 - Methods containing *_part(s)* always include leading or trailing separators and may return empty elements in vectors
 - Methods containing *segment(s)* ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
 - In tuples returned from *segment(s)* and *part(s)* methods, *head* means the segment before the first split and tail the remainder, while *start* means the whole string before the last split and *end* only the last part of the last matched separator.
-- Enclose or wrap mehhods ending in *_escaped* have an optional escape character parameter
-- Enclose or wrap mehhods ending in *_safe* insert a backslash before the any non-final occurrences of the closing characters unless already present
+- Enclose or wrap methods ending in *_escaped* have an optional escape character parameter
+- Enclose or wrap methods ending in *_safe* insert a backslash before the any non-final occurrences of the closing characters unless already present
 
 ##### Simple case-insensitive match
 ```rust
