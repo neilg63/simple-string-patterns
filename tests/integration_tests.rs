@@ -337,3 +337,50 @@ fn test_matched_conditional() {
   assert_eq!(nepal_jpg_files_vector.len(), 2);
 
 }
+
+#[test]
+fn test_enclose_in_chars() {
+  // As this works on literal strs/Strings only it may only match a set number of characters
+  let sample_str = "purple";
+  
+  let out_str_1 = "(purple)";
+
+  let out_str_2 = "<purple>";
+
+  let out_str_3 = "‟purple„";
+
+  let out_str_4 = "(?=purple)";
+
+  assert_eq!(sample_str.parenthesize(), out_str_1.to_owned());
+
+  assert_eq!(sample_str.wrap('<'), out_str_2.to_owned());
+
+  assert_eq!(sample_str.enclose('‟', '„'), out_str_3.to_owned());
+
+  assert_eq!(sample_str.in_parentheses(Some("?=")), out_str_4.to_owned());
+
+}
+
+#[test]
+fn test_enclose_escaped_in_chars() {
+  // As this works on literal strs/Strings only it may only match a set number of characters
+  let sample_str = r#"Tom whispered "I love you" as he gazed into Jennifer's eyes only inches away."#;
+  
+  let expected_quoted_str = r#""Tom whispered \"I love you\" as he gazed into Jennifer's eyes only inches away.""#;
+
+  assert_eq!(sample_str.double_quotes_safe(), expected_quoted_str.to_owned());
+
+
+  let sample_str_2 = r#"Bee's wax and \'organic honey\'"#;
+
+  let expected_quoted_str_2 = r#"'Bee\'s wax and \'organic honey\''"#;
+
+  assert_eq!(sample_str_2.single_quotes_safe(), expected_quoted_str_2.to_owned());
+
+  let sample_str_3 = r#"She wrote "From Antarctica with a Cold Heart""#;
+
+  let expected_quoted_str_3 = r#""She wrote ""From Antarctica with a Cold Heart""""#;
+
+  assert_eq!(sample_str_3.wrap_escaped('"', Some('"')), expected_quoted_str_3.to_owned());
+
+}

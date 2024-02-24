@@ -3,6 +3,7 @@ pub mod enums;
 pub mod alphanumeric;
 pub mod segments;
 pub mod simple_match;
+pub mod enclose;
 
 /// This library provides a set of traits and extension methods for &str and/or String
 /// to facilitate common string manipulations routines that may otherwise require multiple steps
@@ -13,3 +14,4 @@ pub use crate::enums::*;
 pub use crate::alphanumeric::*;
 pub use crate::segments::*;
 pub use crate::simple_match::*;
+pub use crate::enclose::*;

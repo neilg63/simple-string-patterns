@@ -14,6 +14,8 @@ This library makes it easier to match, split and extract strings in Rust. It bui
 - Methods containing *_part(s)* always include leading or trailing separators and may return empty elements in vectors
 - Methods containing *segment(s)* ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
 - In tuples returned from *segment(s)* and *part(s)* methods, *head* means the segment before the first split and tail the remainder, while *start* means the whole string before the last split and *end* only the last part of the last matched separator.
+- Enclose or wrap mehhods ending in *_escaped* have an optional escape character parameter
+- Enclose or wrap mehhods ending in *_safe* insert a backslash before the any non-final occurrences of the closing characters unless already present
 
 ##### Simple case-insensitive match
 ```rust
@@ -129,6 +131,22 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
   /// should yield two file names: ["photo_Nepal_Jan-2005.jpg", "pic_nepal_Dec-2004.png"]
 ```
 
+#### Enclose strings in common bouding characters
+```rust
+  let sample_phrase = r#"LLM means "large language model""#;
+  
+  let phrase_in_round_brackets = sample_phrase.parenthesize();
+  // yields (LM means "large language model")
+  // but will not escape any parentheses in the source string.
+
+  let phrase_in_left_right_quotes = sample_phrase.enclose('“', '”');
+  // yields “LM means "large language model"”
+  // in custom left and right quotation marks, but will not escape double quotes.
+
+  let phrase_in_double_quotes = sample_phrase.double_quotes_safe();
+  // yields “LM means \"large language model\"" with backslash-escaped double quotes
+```
+
 ### Traits
 
 - **CharGroupMatch**:	Has methods to validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic
@@ -138,6 +156,7 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
 - **SimpleMatchesMany**:	Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results. matched_conditional
 - **SimpleMatchAll**:	Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a boolean if all are matched
 - **SimpleFilterAll**: Applies simple Regex-free multiple *match* methods to an array or vector of strings and returns a filtered vector of string slices
+- **SimpleEnclose**: Wraps strings in pairs of matching characters with variants for different escape character rules
 - **ToStrings**:	Converts arrays or vectors of strs to a vector of owned strings
 
 ### Enums
