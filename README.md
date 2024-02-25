@@ -159,6 +159,7 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
   println!("{}", lower_case_letters_a_to_m_only);
   // should print  "dceieachlichcafca"
 
+  /// You can filter strings by multiple character categories
   let sample_with_lower_case_chars_and_spaces = sample_str.filter_by_types(&[CharType::Lower, CharType::Spaces]);
   println!("{}", sample_with_lower_case_chars_and_spaces);
   // Should print "roducts  per unit  each  only ürich café cañon"
