@@ -211,4 +211,4 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
 ### Dev Notes
 This crate is still in its alpha stage and serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
 
-The *string-patterns* crate before 0.3.0 contains many of these extensions. From version 0.3.0 all traits, enums and methods defined in this *simple-string-patterns* will be removed. If you need to combine their features, you install both crates.
+The *string-patterns* crate before 0.3.0 contains many of these extensions. From version 0.3.0 all traits, enums and methods defined in this *simple-string-patterns* will be removed. If you need to combine their features, you can install both crates.
