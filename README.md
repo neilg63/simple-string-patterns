@@ -131,20 +131,20 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
   /// should yield two file names: ["photo_Nepal_Jan-2005.jpg", "pic_nepal_Dec-2004.png"]
 ```
 
-#### Enclose strings in common bouding characters
+#### Enclose strings in common bounding characters
 ```rust
   let sample_phrase = r#"LLM means "large language model""#;
   
   let phrase_in_round_brackets = sample_phrase.parenthesize();
-  // yields (LM means "large language model")
+  // yields (LLM means "large language model")
   // but will not escape any parentheses in the source string.
 
   let phrase_in_left_right_quotes = sample_phrase.enclose('“', '”');
-  // yields “LM means "large language model"”
+  // yields “LLM means "large language model"”
   // in custom left and right quotation marks, but will not escape double quotes.
 
   let phrase_in_double_quotes = sample_phrase.double_quotes_safe();
-  // yields “LM means \"large language model\"" with backslash-escaped double quotes
+  // yields “LLM means \"large language model\"" with backslash-escaped double quotes
 ```
 
 ### Traits
