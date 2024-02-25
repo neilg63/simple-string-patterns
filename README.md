@@ -169,7 +169,11 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
 ```rust
   let sample_without_punctuation = sample_str.strip_by_type(CharType::Punctuation);
   println!("{}", sample_without_punctuation);
-  // let expected_string = "Products999perunit£1950each€15onlyZürichcafécañon";
+  // should print "Products 999 per unit £1950 each €15 only Zürich café cañon";
+  
+  let sample_without_spaces_and_punct = sample_str.strip_by_types(&[CharType::Spaces, CharType::Punctuation]);
+  println!("{}", sample_without_spaces_and_punct);
+  // should print "Products999perunit£1950each€15onlyZürichcafécañon";
 ```
 
 ### Traits
