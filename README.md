@@ -12,7 +12,7 @@ This library makes it easier to match, split and extract strings in Rust. It bui
 - Methods ending in *_ci* are case-insensitive
 - Methods containing *_split* return either a vector or tuple pair.
 - Methods containing *_part(s)* always include leading or trailing separators and may return empty elements in vectors
-- Methods containing *segment(s)* ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
+- Methods containing *_segment(s)* ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
 - In tuples returned from *segment(s)* and *part(s)* methods, *head* means the segment before the first split and tail the remainder, while *start* means the whole string before the last split and *end* only the last part of the last matched separator.
 - Enclose or wrap methods ending in *_escaped* have an optional escape character parameter
 - Enclose or wrap methods ending in *_safe* insert a backslash before the any non-final occurrences of the closing characters unless already present
@@ -147,6 +147,30 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
   // yields “LLM means \"large language model\"" with backslash-escaped double quotes
 ```
 
+#### Filter strings by character categories
+```rust
+  let sample_str = "Products: $9.99 per unit, £19.50 each, €15 only. Zürich café cañon";
+  
+  let vowels_only = sample_str.filter_by_type(CharType::Chars(&['a','e','i','o', 'u', 'é', 'ü', 'y']));
+  println!("{}", vowels_only);
+  // should print "oueuieaoyüiaéao"
+
+  let lower_case_letters_a_to_m_only = sample_str.filter_by_type(CharType::Range('a'..'m'));
+  println!("{}", lower_case_letters_a_to_m_only);
+  // should print  "dceieachlichcafca"
+
+  let sample_with_lower_case_chars_and_spaces = sample_str.filter_by_types(&[CharType::Lower, CharType::Spaces]);
+  println!("{}", sample_with_lower_case_chars_and_spaces);
+  // Should print "roducts  per unit  each  only ürich café cañon"
+
+```
+#### Remove character categories from strings
+```rust
+  let sample_without_punctuation = sample_str.strip_by_type(CharType::Punctuation);
+  println!("{}", sample_without_punctuation);
+  // let expected_string = "Products999perunit£1950each€15onlyZürichcafécañon";
+```
+
 ### Traits
 
 - **CharGroupMatch**:	Has methods to validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic
@@ -168,6 +192,22 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
   - StartsWithCs(&str, bool) case-sensitive *starts with* + is_positive flag
   - EndsWithCs(&str, bool) case-sensitive *ends with* + is_positive flag
   - ContainsCs(&str, bool) case-sensitive *contains* + is_positive flag
-
+- **CharType**: Defines categories, sets or ranges of characters as well as single characters.
+  - Any: will match any characters
+  - DecDigit => Match 0-9 only (is_ascii_digit)
+  - Digit(radix) => Match digit with the specified radix (e.g. 16 for hexadecimal)
+  - Numeric => Match number-like characters in the decimal base. Unlike the is_numeric() extension method this excludes . and -. Use to_numbers_conditional() to extract valid decimal number as strings;
+  - AlphaNum => Match any alphanumeric characters (is_alphanumeric)
+  - Lower => Match lower case letters (is_lowercase),
+  - Upper => Match upper case letters (is_uppercase)
+  - Alpha => Match any letters in most supported alphabets (is_alphabetic)
+  - Spaces => Match spaces c.is_whitespace(),
+  - Punctuation => c.is_ascii_punctuation(),
+  - Char(char) => match a single chars
+  - Chars(&[char]) => Match an array of chars
+  - Range(Range<char>) => Match an Range e.g. 'a'..'d' will include a, b and c, but not d. This follows the Unicode sequence.
+  - Between(c1, c2) => Match characters betweeen the specified characters e.g. Between('a', 'd') will include d.
 ### Dev Notes
 This crate is still in its alpha stage and serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
+
+The *string-patterns* crate before 0.3.0 contains many of these extensions. From version 0.3.0 all traits, enums and methods defined in this *simple-string-patterns* will be removed. If you need to combine their features, you install both crates.

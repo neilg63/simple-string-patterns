@@ -1,5 +1,5 @@
 use std::str::FromStr;
-use crate::{MatchOccurrences, utils::add_sanitized_numeric_string, ToSegments};
+use crate::{utils::add_sanitized_numeric_string, CharType, MatchOccurrences, ToSegments};
 
 // Set of traits with extension methods to match core alphanumeric, numeric character patterns with words
 // ascertain if strings contain valid numbers and extract numbers as floats or integers
@@ -51,7 +51,7 @@ impl IsNumeric for str {
 
 
 /// Set of methods to strip unwanted characters by type or extract vectors of numeric strings, integers or floats
-pub trait StripCharacters {
+pub trait StripCharacters<'a> {
 
   /// Removes all characters that any are not letters or digits, such as punctuation or symbols
   /// Letters include those used in most non-Latin alphabets
@@ -59,6 +59,18 @@ pub trait StripCharacters {
 
   // Remove all characters except digits, including punctuation such as decmimal points
   fn strip_non_digits(&self) -> String;
+
+  /// Remove characters in the specified character category/range
+  fn strip_by_type(&self, ct: CharType<'a>) -> String;
+
+  /// Remove characters in the specified range or type. Lets you exclude by a set of character types (as an array)
+  fn strip_by_types(&self, cts: &[CharType<'a>]) -> String;
+
+  /// Return only characters in the specified range or type
+  fn filter_by_type(&self, ct: CharType<'a>) -> String;
+
+  /// Filter characters in the specified range or type. Lets you filter by a set of character types (as an array)
+  fn filter_by_types(&self, cts: &[CharType<'a>]) -> String;
 
   /// Extracts valid numeric string components from a longer string
   fn to_numeric_strings(&self) -> Vec<String> {
@@ -122,7 +134,7 @@ pub trait StripCharacters {
 }
 
 
-impl StripCharacters for str {
+impl<'a> StripCharacters<'a> for str {
     
   /// Remove all characters that are not letters or numerals for later string comparison. Does not use a regular expression
   /// Will remove all spaces separating words
@@ -135,6 +147,26 @@ impl StripCharacters for str {
   /// Use strip_non_numeric to extract a string with valid numbers only separated by spaces
   fn strip_non_digits(&self) -> String {
     self.chars().into_iter().filter(|c| c.is_digit(10)).collect::<String>()
+  }
+
+  /// remove all characters in the specified category or range
+  fn strip_by_type(&self, ct: CharType<'a>) -> String {
+    self.chars().into_iter().filter(|c| ct.is_in_range(c) == false).collect::<String>()
+  }
+
+  /// remove all characters in the specified set of categories or ranges
+  fn strip_by_types(&self, cts: &[CharType<'a>]) -> String {
+    self.chars().into_iter().filter(|c| cts.iter().any(|ct| ct.is_in_range(c)) == false).collect::<String>()
+  }
+
+  /// Filter all characters in the specified category or range
+  fn filter_by_type(&self, ct: CharType<'a>) -> String {
+    self.chars().into_iter().filter(|c| ct.is_in_range(c)).collect::<String>()
+  }
+
+  /// Filter all characters in the specified set of categories or ranges
+  fn filter_by_types(&self, cts: &[CharType<'a>]) -> String {
+    self.chars().into_iter().filter(|c| cts.iter().any(|ct| ct.is_in_range(c))).collect::<String>()
   }
 
   /// Correct numeric strings with commas as thousand separators or as decimal separators

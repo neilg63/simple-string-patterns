@@ -384,3 +384,40 @@ fn test_enclose_escaped_in_chars() {
   assert_eq!(sample_str_3.wrap_escaped('"', Some('"')), expected_quoted_str_3.to_owned());
 
 }
+
+#[test]
+fn test_filter_by_character_type() {
+  // Nonsense text with miscellaneous letters, numbers and punctuation
+  let sample_str = "Products: $9.99 per unit, £19.50 each, €15 only. Zürich café cañon";
+  
+  let vowels_only = sample_str.filter_by_type(CharType::Chars(&['a','e','i','o', 'u', 'é', 'ü', 'y']));
+  let expected_vowel_sequence = "oueuieaoyüiaéao";
+  assert_eq!(vowels_only, expected_vowel_sequence);
+
+  let lower_case_letters_a_to_m_only = sample_str.filter_by_type(CharType::Range('a'..'m'));
+  let expected_letter_sequence = "dceieachlichcafca";
+  assert_eq!(lower_case_letters_a_to_m_only, expected_letter_sequence);
+
+  let sample_without_punctuation = sample_str.strip_by_type(CharType::Punctuation);
+  let expected_string = "Products 999 per unit £1950 each €15 only Zürich café cañon";
+  assert_eq!(sample_without_punctuation, expected_string);
+
+  let sample_without_spaces_and_punct = sample_str.strip_by_types(&[CharType::Spaces, CharType::Punctuation]);
+  let expected_string = "Products999perunit£1950each€15onlyZürichcafécañon";
+  assert_eq!(sample_without_spaces_and_punct, expected_string);
+
+  let sample_with_upper_case_accented_chars = sample_str.filter_by_types(&[CharType::Upper, CharType::Chars(&['é', 'ü'])]);
+  let expected_string = "PZüé";
+  assert_eq!(sample_with_upper_case_accented_chars, expected_string);
+
+  let sample_with_lower_case_chars_and_spaces = sample_str.filter_by_types(&[CharType::Lower, CharType::Spaces]);
+  let expected_string = "roducts  per unit  each  only ürich café cañon";
+  assert_eq!(sample_with_lower_case_chars_and_spaces, expected_string);
+
+
+  let sample_str_2 = "Orange: #ff9900";
+  let hexadecimal_digits_only = sample_str_2.filter_by_type(CharType::Digit(16));
+  let expected_letter_sequence = "aeff9900";
+  assert_eq!(hexadecimal_digits_only, expected_letter_sequence);
+
+}
