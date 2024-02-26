@@ -212,7 +212,9 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
   - Chars(&[char]) => Match an array of chars
   - Range(Range<char>) => Match an Range e.g. 'a'..'d' will include a, b and c, but not d. This follows the Unicode sequence.
   - Between(c1, c2) => Match characters betweeen the specified characters e.g. Between('a', 'd') will include d.
-### Dev Notes
-This crate is still in its alpha stage and serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
 
-The *string-patterns* crate before 0.3.0 contains many of these extensions. From version 0.3.0 all traits, enums and methods defined in this *simple-string-patterns* will be removed. If you need to combine their features, you can install both crates.
+### Dev Notes
+
+This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
+
+Versions of the *string-patterns* crate before 0.3.0 contained many of these extensions. Since version 0.3.0 all traits, enums and methods defined in this *simple-string-patterns* have been removed. These crates supplement each other, but may be installed independently.
