@@ -4,7 +4,9 @@
 
 # Simple String Patterns
 
-This library makes it easier to match, split and extract strings in Rust. It builds on the Rust standard library. A parallel [string-patterns](https://crates.io/crates/string-patterns) crate provides extensions to work with *regular expressions*. Together, they aims to make working with strings as easy in Rust as it is Javascript or Python with cleaner syntax. Simpler string matching methods such as starts_with, contains or ends_with will always perform better, especially when processing large data sets. To this end, the crate provides methods such as *starts_with_ci* and *starts_with_ci_alphanum* for basic string validation without regular expressions as well as extension methods to split strings into vectors of strings or a *head* and *tail* components.
+This library makes it easier to match, split and extract strings in Rust. It builds on the Rust standard library. A parallel [string-patterns](https://crates.io/crates/string-patterns) crate provides extensions to work with *regular expressions*. Together, these crates aim to make working with strings as easy in Rust as it is Javascript or Python with cleaner syntax.
+
+Simpler string matching methods such as starts_with, contains or ends_with will always perform better, especially when processing large data sets. To this end, the crate provides methods such as *starts_with_ci* and *starts_with_ci_alphanum* for basic string validation without regular expressions as well as extension methods to split strings into vectors of strings or a *head* and *tail* components.
 
 ### Method overview
 - Many methods without *_ci* or *_cs* suffixes require a boolean *case_insensitive* parameter
@@ -177,7 +179,7 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
 ```
 
 ### Traits
-
+  **MatchOccurrences**: Returns the indices of all ocurrences of an exact string
 - **CharGroupMatch**:	Has methods to validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic
 - **IsNumeric**	Provides a method to check if the string may be parsed to an integer or float
 - **StripCharacters**:	Set of methods to strip unwanted characters by type or extract vectors of numeric strings, integers or floats without regular expressions
