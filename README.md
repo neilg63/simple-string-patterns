@@ -116,21 +116,22 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
 // This is very useful for prefiltering large sets of simple strings 
 // representing things like file names.
 // Ci, Cs suffixes mean case-insensitive and case-sensitive respectively
-  let mixed_conditions = [
-    StringBounds::ContainsCi("nepal", true),
-    StringBounds::EndsWithCi(".psd", false),
-  ];
+let mixed_conditions = [
+  StringBounds::ContainsCi("nepal", true),
+  StringBounds::EndsWithCi(".psd", false),
+];
 
-  let file_names = [
-    "edited-img-Nepal-Feb-2003.psd",
-    "image-Thailand-Mar-2003.jpg",
-    "photo_Nepal_Jan-2005.jpg",
-    "image-India-Mar-2003.jpg",
-    "pic_nepal_Dec-2004.png"
-  ];
+let file_names = [
+  "edited-img-Nepal-Feb-2003.psd",
+  "image-Thailand-Mar-2003.jpg",
+  "photo_Nepal_Jan-2005.jpg",
+  "image-India-Mar-2003.jpg",
+  "pic_nepal_Dec-2004.png"
+];
   
-  let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_conditions);
-  /// should yield two file names: ["photo_Nepal_Jan-2005.jpg", "pic_nepal_Dec-2004.png"]
+let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_conditions);
+// should yield two file names: ["photo_Nepal_Jan-2005.jpg", "pic_nepal_Dec-2004.png"]
+// This will now return Vec<&str> or Vec<String> depending on the source string type.
 ```
 
 #### Enclose strings in common bounding characters

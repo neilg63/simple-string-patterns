@@ -166,28 +166,28 @@ impl SimpleMatchAll for str {
 
 
 /// Test multiple patterns and return a filtered vector of string slices
-pub trait SimpleFilterAll {
+pub trait SimpleFilterAll<'a, T> {
 
   /// test for multiple conditions. All other trait methods are derived from this
-  fn filter_all_conditional(&self, pattern_sets: &[StringBounds]) -> Vec<&str>;
+  fn filter_all_conditional(&'a self, pattern_sets: &[StringBounds]) -> Vec<T>;
   
 }
 
 /// Filter strings by one or more StringBounds rules
-impl SimpleFilterAll for [&str] {
+impl<'a> SimpleFilterAll<'a, &'a str> for [&str] {
 
   // filter string slices by multiple conditions
-  fn filter_all_conditional(&self, pattern_sets: &[StringBounds]) -> Vec<&str> {
-    self.into_iter().map(|s| s.to_owned()).filter(|s| s.match_all_conditional(pattern_sets)).collect::<Vec<&str>>()
+  fn filter_all_conditional(&'a self, pattern_sets: &[StringBounds]) -> Vec<&'a str> {
+    self.into_iter().map(|s| s.to_owned()).filter(|s| s.match_all_conditional(pattern_sets)).collect::<Vec<&'a str>>()
   }
 
 }
 
-
-impl SimpleFilterAll for [String] {
+/// Variant implementation for owned strings
+impl<'a> SimpleFilterAll<'a, String> for [String] {
   // filter strings by multiple conditions
-  fn filter_all_conditional(&self, pattern_sets: &[StringBounds]) -> Vec<&str> {
-    self.into_iter().filter(|s| s.match_all_conditional(pattern_sets)).map(|s| s.as_str()).collect::<Vec<&str>>()
+  fn filter_all_conditional(&'a self, pattern_sets: &[StringBounds]) -> Vec<String> {
+    self.into_iter().filter(|s| s.match_all_conditional(pattern_sets)).map(|s| s.to_owned()).collect::<Vec<String>>()
   }
 
 }

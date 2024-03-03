@@ -332,7 +332,9 @@ fn test_matched_conditional() {
 
   let file_names_vector = file_names.to_strings();
 
-  let nepal_jpg_files_vector: Vec<&str> = file_names_vector.filter_all_conditional(&mixed_conditions);
+  let nepal_jpg_files_vector: Vec<String> = file_names_vector.filter_all_conditional(&mixed_conditions);
+  
+  assert_eq!(nepal_jpg_files_vector.len(), 2);
   
   assert_eq!(nepal_jpg_files_vector.len(), 2);
 
