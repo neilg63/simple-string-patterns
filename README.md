@@ -158,7 +158,7 @@ let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_con
   println!("{}", vowels_only);
   // should print "oueuieaoyüiaéao"
 
-  let lower_case_letters_a_to_m_only = sample_str.filter_by_type(CharType::Range('a'..'m'));
+  let lower_case_letters_a_to_m_only = sample_str.filter_by_type(CharType::Range('a'..'n'));
   println!("{}", lower_case_letters_a_to_m_only);
   // should print  "dceieachlichcafca"
 
