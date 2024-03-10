@@ -6,6 +6,7 @@ pub mod simple_match;
 pub mod enclose;
 pub mod to_strings;
 pub mod char_type;
+pub mod bounds_builder;
 
 /// This library provides a set of traits and extension methods for &str and/or String
 /// to facilitate common string manipulations routines that may otherwise require multiple steps
@@ -19,3 +20,4 @@ pub use crate::simple_match::*;
 pub use crate::enclose::*;
 pub use crate::to_strings::*;
 pub use crate::char_type::*;
+pub use crate::bounds_builder::*;

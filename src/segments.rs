@@ -1,3 +1,5 @@
+use crate::simple_match::*;
+
 /// Methods to split a longer strong on a separator and return a vector of strings,
 /// a tuple of two strings or single optional string segment
 /// Note some methods may return empty segments in the case of leading, trailing or repeated separators
@@ -92,6 +94,8 @@ impl ToSegments for str {
     }
   }
 
+  /// extract the remainder after the first split 
+  /// or the whole string if the separator is absent
   fn to_tail(&self, separator: &str) -> String {
     let parts = self.to_parts(separator);
     let num_parts = parts.len();
@@ -170,7 +174,6 @@ impl ToSegments for str {
     }
   }
 
-  /// 
   /// Extract a tuple of the head and remainder, like split_once but returns Strings
   fn to_head_tail(&self, separator: &str) -> (String, String) {
     if let Some((head, tail)) = self.split_once(separator) {
@@ -180,7 +183,6 @@ impl ToSegments for str {
     }
   }
 
-  /// 
   /// Extract a tuple of the tail and remainder, like split_once in reverse and returning strings
   fn to_start_end(&self, separator: &str) -> (String, String) {
     let parts = self.to_parts(separator);
@@ -193,6 +195,78 @@ impl ToSegments for str {
     } else {
       (self.to_owned(), "".to_string())
     }
+  }
+
+}
+
+
+/// Methods to split a &str/String on the first matched separator character
+pub trait ToSegmentsFromChars {
+  
+  /// Split a string into parts separated by any of the referenced split characters
+  fn split_on_any_char(&self, separators: &[char]) -> Vec<String>;
+
+  /// Split a string into a head and tail separated by the first instance of the first matching separator
+  /// If none of the separators are matched, the first element is
+  ///  an empty string and the second the whole string
+  fn to_head_tail_on_any_char(&self, separators: &[char]) -> (String, String);
+
+  /// Split a string into s start and tail separated by the last instance of the first matching separator
+  /// If none of the separators are matched, the first element is
+  ///  an empty string and the second the whole string
+  fn to_start_end_on_any_char(&self, separators: &[char]) -> (String, String);
+}
+
+impl ToSegmentsFromChars for str {
+
+  /// Split a string on any of the referenced characters
+  fn split_on_any_char(&self, separators: &[char]) -> Vec<String> {
+    let mut parts: Vec<String> = Vec::new();
+    let mut has_match = false;
+    let mut indices: Vec<usize> = Vec::new();
+    for separator in separators {
+      for matched_index in self.find_char_indices(*separator) {
+        indices.push(matched_index);
+      }
+    }
+    indices.sort_by(|a, b| a.cmp(b));
+    let mut prev_start = 0;
+    for index in indices {
+      let segment = self[prev_start..index].to_string();
+      parts.push(segment);
+      has_match = true;
+      prev_start = index + 1;
+    }
+    if has_match {
+      parts.push(self[prev_start..].to_string());
+      parts
+    } else {
+      vec![self.to_owned()]
+    }
+  }
+
+  /// Split into head and tail components on the first occurrence of any of the referenced characters
+  fn to_head_tail_on_any_char(&self, separators: &[char]) -> (String, String) {
+    for ch in separators {
+      if self.contains(*ch) {
+        if let Some ((first, second)) = self.split_once(*ch) {
+          return (first.to_string(), second.to_string());
+        }
+      }
+    }
+    ("".to_owned(), self.to_string())
+  }
+
+  /// Split into start and end components on the last occurrence of any of the referenced characters
+  fn to_start_end_on_any_char(&self, separators: &[char]) -> (String, String) {
+    for ch in separators {
+      if self.contains(*ch) {
+        if let Some ((first, second)) = self.rsplit_once(*ch) {
+          return (first.to_string(), second.to_string());
+        }
+      }
+    }
+    (self.to_string(), "".to_owned())
   }
 
 }

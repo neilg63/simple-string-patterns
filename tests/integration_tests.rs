@@ -423,3 +423,51 @@ fn test_filter_by_character_type() {
   assert_eq!(hexadecimal_digits_only, expected_letter_sequence);
 
 }
+
+#[test]
+fn test_split_on_characters() {
+  // Sample string with different, but predictable seprators
+  let sample_strs = [
+    "jazz-and-blues-music",
+    "rock_and_roll-music",
+    "classical music-hall"
+  ];
+
+  let split_chars = ['-','_', ' '];
+  let words = sample_strs.into_iter().map(|s| s.split_on_any_char(&split_chars)).collect::<Vec<Vec<String>>>();
+  let first_line_words = words.get(0);
+  assert_eq!(first_line_words.unwrap().last().unwrap().to_owned(), "music".to_owned());
+
+  let last_line_words = words.last();
+  assert_eq!(last_line_words.unwrap().get(0).unwrap().to_owned(), "classical".to_owned());
+
+  let sample_str = "jazz-and-blues_music/section";
+  let parts = sample_str.split_on_any_char(&['-','_', '/']);
+  let expected_parts = ["jazz", "and", "blues", "music", "section"].to_strings();
+  assert_eq!(parts, expected_parts);
+
+}
+
+#[test]
+fn test_bounds_builder() {
+  // Nonsense text with miscellaneous letters, numbers and punctuation
+  let rules = bounds_builder()
+      .starts_with_ci("cat", true)
+      .ends_with_ci(".jpg", false);
+  
+  let sample_strs = [
+    "cat-picture.jpg",
+    "Dog-picture.png",
+    "CAT-image.png",
+    "rabbit-photo.png",
+    "cAt-pic.webp"
+  ];
+
+  let filtered_lines = sample_strs.filter_all_conditional(&rules.as_vec());
+  let expected_lines = vec![
+    "CAT-image.png",
+    "cAt-pic.webp"
+  ];
+  assert_eq!(filtered_lines, expected_lines);
+
+}

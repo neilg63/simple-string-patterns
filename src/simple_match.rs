@@ -1,4 +1,4 @@
-use crate::{enums::StringBounds, utils::{pairs_to_string_bounds, strs_to_string_bounds}, StripCharacters};
+use crate::{enums::StringBounds, utils::{pairs_to_string_bounds, strs_to_string_bounds}, CharType, StripCharacters};
 
 /// Regex-free matcher methods for common use cases
 pub trait SimpleMatch {
@@ -59,12 +59,19 @@ pub trait MatchOccurrences {
   /// Return the indices only of all matches of a given string pattern (not a regular expression)
   /// Builds on match_indices in the Rust standard library
   fn find_matched_indices(&self, pat: &str) -> Vec<usize>;
+
+  fn find_char_indices(&self, pat: char) -> Vec<usize>;
 }
 
 
 impl MatchOccurrences for str {
     /// Return the indices only of all matches of a given regular expression
   fn find_matched_indices(&self, pat: &str) -> Vec<usize> {
+    self.match_indices(pat).into_iter().map(|pair| pair.0).collect::<Vec<usize>>()
+  }
+
+  /// As above, but with a character to avoid coercion
+  fn find_char_indices(&self, pat: char) -> Vec<usize> {
     self.match_indices(pat).into_iter().map(|pair| pair.0).collect::<Vec<usize>>()
   }
 }
@@ -161,6 +168,80 @@ impl SimpleMatchAll for str {
   fn match_all_conditional(&self, pattern_sets: &[StringBounds]) -> bool {
     self.matched_conditional(pattern_sets).into_iter().all(|matched| matched)
   }
+
+}
+
+/// Test if character set (CharType) is in the string
+pub trait SimplContainsType where Self:SimpleMatch {
+
+  /// contains characters in the specified set
+  fn contains_type(&self, char_type: CharType) -> bool;
+
+  /// contains characters in the specified sets
+  fn contains_types(&self, char_types: &[CharType]) -> bool;
+
+  /// starts with one or more characters in the specified set
+  fn starts_with_type(&self, char_type: CharType) -> bool;
+
+  /// starts with one or more characters in the specified set
+  fn starts_with_types(&self, char_types: &[CharType]) -> bool;
+
+  /// ends with one or more characters in the specified sets
+  fn ends_with_type(&self, char_type: CharType) -> bool;
+
+  /// ends with one or more characters in the specified sets
+  fn ends_with_types(&self, char_types: &[CharType]) -> bool;
+  
+}
+
+/// Implement character-set matching on &str/String
+impl SimplContainsType for str {
+
+  // test for multiple conditions. All other 'many' trait methods are derived from this
+  fn contains_type(&self, char_type: CharType) -> bool {
+    self.chars().any(|ch| char_type.is_in_range(&ch))
+  }
+
+  fn contains_types(&self, char_types: &[CharType]) -> bool {
+    self.chars().any(|ch| char_types.into_iter().any(|ct| ct.is_in_range(&ch)))
+  }
+
+   /// starts with one or more characters in the specified set
+   fn starts_with_type(&self, char_type: CharType) -> bool {
+    if let Some(first) = self.chars().nth(0) {
+      char_type.is_in_range(&first)
+    } else {
+      false
+    }
+   }
+
+   /// starts with one or more characters in the specified set
+   fn starts_with_types(&self, char_types: &[CharType]) -> bool {
+    if let Some(first) = self.chars().nth(0) {
+      char_types.into_iter().any(|ct| ct.is_in_range(&first))
+    } else {
+      false
+    }
+   }
+ 
+   /// ends with one or more characters in the specified sets
+   fn ends_with_type(&self, char_type: CharType) -> bool {
+    if let Some(first) = self.chars().last() {
+      char_type.is_in_range(&first)
+    } else {
+      false
+    }
+   }
+ 
+   /// ends with one or more characters in the specified sets
+   fn ends_with_types(&self, char_types: &[CharType]) -> bool {
+    if let Some(first) = self.chars().last() {
+      char_types.into_iter().any(|ct| ct.is_in_range(&first))
+    } else {
+      false
+    }
+   }
+   
 
 }
 

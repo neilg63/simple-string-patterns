@@ -121,6 +121,13 @@ let mixed_conditions = [
   StringBounds::EndsWithCi(".psd", false),
 ];
 
+// The same array may also be expressed via the new bounds_builder() function with chainable rules:
+// Call .as_vec() at the end
+let mixed_conditions = bounds_builder()
+  .contains_ci("nepal", true)
+  .ends_with_ci(".psd", false)
+  .as_vec();
+
 let file_names = [
   "edited-img-Nepal-Feb-2003.psd",
   "image-Thailand-Mar-2003.jpg",
@@ -179,6 +186,13 @@ let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_con
   // should print "Products999perunit£1950each€15onlyZürichcafécañon";
 ```
 
+#### Split a string on any of set of characters
+```rust
+  let sample_str = "jazz-and-blues_music/section";
+  let parts = sample_str.split_on_any_char(&['-','_', '/']);
+  // should yield "jazz", "and", "blues", "music", "section" as a vector of strings
+```
+
 ### Traits
   **MatchOccurrences**: Returns the indices of all ocurrences of an exact string
 - **CharGroupMatch**:	Has methods to validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic
@@ -190,6 +204,8 @@ let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_con
 - **SimpleFilterAll**: Applies simple Regex-free multiple *match* methods to an array or vector of strings and returns a filtered vector of string slices
 - **SimpleEnclose**: Wraps strings in pairs of matching characters with variants for different escape character rules
 - **ToStrings**:	Converts arrays or vectors of strs to a vector of owned strings
+- **ToSegments**: Splits strings into parts, segments or head and tail pairs on a separator
+- **ToSegmentFromChars**: Splits strings into parts on any of any array of characters
 
 ### Enums
 - **StringBounds**: Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::ContainsCi("report", true) or StringBounds::EndsWithCi(".docx", false). The *Ci* and *Cs* variants affect case-sensitivity.
@@ -219,5 +235,10 @@ let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_con
 ### Dev Notes
 
 This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
+
+Version 0.2.2 introduces three new features:
+- *bounds_builder()* makes it easier to define string matching rules methods requiring an array of *StringBounds* rules such as filter_all_conditional(). See example above.
+- *ToSegmentFromChars* provides new methods to split on any of an array of characters, e.g. when processing common patterns that may use a predictable set of separators. This mimics characters classes in regular expressions and is more efficient when you only need to allow for a limited set of split characters.
+- *MatchOccurrences* has a variant *find_char_indices* method that accepts a *char* rather than a *&str*. This avoids any need to cast a character to a string.
 
 Versions of the *string-patterns* crate before 0.3.0 contained many of these extensions. Since version 0.3.0 all traits, enums and methods defined in this *simple-string-patterns* have been removed. These crates supplement each other, but may be installed independently.
