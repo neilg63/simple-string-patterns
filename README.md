@@ -194,7 +194,7 @@ let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_con
 ```
 
 ### Traits
-  **MatchOccurrences**: Returns the indices of all ocurrences of an exact string
+  **MatchOccurrences**: Has methods to return the indices of all ocurrences of an exact string (find_matched_indices) or single character (find_char_indices);
 - **CharGroupMatch**:	Has methods to validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic
 - **IsNumeric**	Provides a method to check if the string may be parsed to an integer or float
 - **StripCharacters**:	Set of methods to strip unwanted characters by type or extract vectors of numeric strings, integers or floats without regular expressions
@@ -227,8 +227,8 @@ let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_con
   - Alpha => Match any letters in most supported alphabets (is_alphabetic)
   - Spaces => Match spaces c.is_whitespace(),
   - Punctuation => c.is_ascii_punctuation(),
-  - Char(char) => match a single chars
-  - Chars(&[char]) => Match an array of chars
+  - Char(char) => match a single character
+  - Chars(&[char]) => Match an array of characters
   - Range(Range<char>) => Match an Range e.g. 'a'..'d' will include a, b and c, but not d. This follows the Unicode sequence.
   - Between(c1, c2) => Match characters betweeen the specified characters e.g. Between('a', 'd') will include d.
 

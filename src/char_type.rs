@@ -1,5 +1,6 @@
 use std::ops::Range;
 
+/// Defines character group types with special custom types (Char, Chars, Range, Between)
 #[derive(Debug, Clone)]
 pub enum CharType<'a> {
   Any,
