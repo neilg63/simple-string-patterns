@@ -40,13 +40,13 @@ if str_1.contains_ci_alphanum("hiphop") {
 ##### Filter a vector of strings by their first alphanumeric characters
 ```rust
 // Methods ending in _alphanum are good for filtering strings that may have other
-// to strings() converts as an array of &str references to a vector of strings
+// to_strings() converts an array of &str references to a vector of strings
 let sample_strs = [
   "/blue-sky.jpg",
   "----bluesky.png",
   "-B-l-u-e--sky",
   "Blueberry",
-  " Blues sky thinking"
+  " Blue sky thinking"
 ].to_strings();
 let strings_starting_with_blue = sample_strs
   .into_iter()

@@ -87,10 +87,12 @@ pub trait SimpleEnclose {
     self.wrap('"')
   }
 
+  // Wrap in single quotes
   fn single_quotes(& self) -> String {
     self.wrap('\'')
   }
 
+  // Wrap in single quotes
   fn double_quotes_safe(& self) -> String {
     self.wrap_escaped('"', Some('\\'))
   }
@@ -102,7 +104,7 @@ pub trait SimpleEnclose {
 }
 
 
-// Implement the base method for &str/String
+/// Implement the base method for &str/String
 impl SimpleEnclose for str {
   fn enclose_in_chars(&self, start: char, end: char, prefix: Option<&str>, escape_char: Option<char>) -> String {
     let mut out = match escape_char {
@@ -124,6 +126,9 @@ impl SimpleEnclose for str {
   }
 }
 
+/// Escape a string enclosed in (double) quotes.
+/// The customary escape character is a backslash, but some systems require doubled quote characters
+/// To avoid double-escaping, escape characters are not escaped. Strings are thus treated as literals
 pub fn escape_in_str(chars: Chars, end: char, esc_char: char) -> String {
   let mut new_string = String::new();
   let mut prev_char = ' ';
