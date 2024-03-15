@@ -87,16 +87,17 @@ pub trait SimpleEnclose {
     self.wrap('"')
   }
 
-  // Wrap in single quotes
+  /// Wrap in single quotes
   fn single_quotes(& self) -> String {
     self.wrap('\'')
   }
 
-  // Wrap in single quotes
+  /// Wrap in double quotes with escaped quotes in the content
   fn double_quotes_safe(& self) -> String {
     self.wrap_escaped('"', Some('\\'))
   }
 
+  /// Wrap in single quotes with escaped quotes in the content
   fn single_quotes_safe(& self) -> String {
     self.wrap_escaped('\'', Some('\\'))
   }

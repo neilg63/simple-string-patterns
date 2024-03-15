@@ -5,7 +5,7 @@ use std::ops::Range;
 pub enum CharType<'a> {
   Any,
   DecDigit, // is_ascii_digit
-  Digit(u32),
+  Digit(u32), // define the number base, e.g. 16 for hexdecimal
   Numeric, // as defined by the std library, i.e. a number-like character, but not decimal points or minus
   AlphaNum,
   Upper,
