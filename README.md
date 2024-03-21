@@ -312,7 +312,7 @@ Version 0.2.2 introduces three new features:
 - *ToSegmentFromChars* provides new methods to split on any of an array of characters, e.g. when processing common patterns that may use a predictable set of separators. This mimics characters classes in regular expressions and is more efficient when you only need to allow for a limited set of split characters.
 - *MatchOccurrences* has a variant *find_char_indices* method that accepts a *char* rather than a *&str*. This avoids any need to cast a character to a string.
 
-Version 0.2.5 introduces SimpleMatchAny and Whole matches in StringBounds.
+*Version 0.2.5* introduces SimpleMatchAny and Whole matches in StringBounds.
 
 This supplements SimpleMatchAll to apply *or* logic with rules sets (StringBound, tuples or simple strs). The StringBounds enum now has whole string match options (with case-insensitive and case-sensitive variants) to accommodate a mix of partial and whole string matches.
 
