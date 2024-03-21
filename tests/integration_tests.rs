@@ -341,6 +341,58 @@ fn test_matched_conditional() {
 }
 
 #[test]
+fn test_matched_any_conditional() {
+  let false_conditions = [
+    StringBounds::WholeCi("no", true),
+    StringBounds::WholeCi("false", true),
+    StringBounds::ContainsCi("not", true),
+    StringBounds::ContainsCi("negative", true),
+  ];
+
+  let boolean_strs_1 = [
+    "NO",
+    "FALSE",
+    "not at all",
+    "negative result",
+    "Noon"
+  ];
+
+  let falsy_strs = [
+    "NO",
+    "FALSE",
+    "not at all",
+    "negative result"
+  ];
+
+  assert_eq!(boolean_strs_1.filter_any_conditional(&false_conditions), falsy_strs);
+
+  let true_conditions = bounds_builder()
+    .is_ci("yes")
+    .is_ci("y")
+    .starting_with_ci("ok")
+    .containing_ci("positive")
+    .as_vec();
+  let boolean_strs_2 = [
+    "Yes",
+    "y",
+    "Yep",
+    "okay",
+    "positive result",
+    "good"
+  ];
+
+  let truthy_strs = [
+    "Yes",
+    "y",
+    "okay",
+    "positive result"
+  ];
+
+  assert_eq!(boolean_strs_2.filter_any_conditional(&true_conditions), truthy_strs);
+
+}
+
+#[test]
 fn test_enclose_in_chars() {
   // As this works on literal strs/Strings only it may only match a set number of characters
   let sample_str = "purple";

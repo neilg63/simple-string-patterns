@@ -8,12 +8,14 @@ pub enum StringBounds<'a> {
   StartsWithCs(&'a str, bool),
   EndsWithCs(&'a str, bool),
   ContainsCs(&'a str, bool),
+  WholeCi(&'a str, bool),
+  WholeCs(&'a str, bool)
 }
 
 impl<'a> StringBounds<'a> {
 
   // Only used internally in utils
-  // 0: starts with, 1 ends with, 2 (default) contains
+  // 0: starts with, 1 ends with, 2 (default) contains, 3 whole
   pub fn new(mode: u8, txt: &'a str, is_positive: bool, case_insensitive: bool) -> StringBounds<'a> {
     match mode {
       0 => if case_insensitive {
@@ -26,6 +28,11 @@ impl<'a> StringBounds<'a> {
       } else {
         Self::EndsWithCs(txt, is_positive)
       },
+      3 => if case_insensitive {
+        Self::WholeCi(txt, is_positive)
+      } else {
+        Self::WholeCs(txt, is_positive)
+      },
       _ => if case_insensitive {
         Self::ContainsCi(txt, is_positive)
       } else {
@@ -36,22 +43,22 @@ impl<'a> StringBounds<'a> {
 
   pub fn case_insensitive(&self) -> bool {
     match self {
-      Self::StartsWithCi(..) | Self::EndsWithCi(..) | Self::ContainsCi(..) => true,
+      Self::StartsWithCi(..) | Self::EndsWithCi(..) | Self::ContainsCi(..) | Self::WholeCi(..) => true,
       _ => false, 
     }
   }
 
   pub fn pattern(&self) -> &'a str {
     match self {
-      Self::StartsWithCi(txt, _) | Self::EndsWithCi(txt, _) | Self::ContainsCi(txt, _) |
-      Self::StartsWithCs(txt, _) | Self::EndsWithCs(txt, _) | Self::ContainsCs(txt, _ ) => txt,
+      Self::StartsWithCi(txt, _) | Self::EndsWithCi(txt, _) | Self::ContainsCi(txt, _) | Self::WholeCi(txt, _) |
+      Self::StartsWithCs(txt, _) | Self::EndsWithCs(txt, _) | Self::ContainsCs(txt, _ ) | Self::WholeCs(txt, _) => txt,
     }.to_owned()
   }
 
   pub fn is_positive(&self) -> bool {
     match self {
-      Self::StartsWithCi(_, is_pos) | Self::EndsWithCi(_, is_pos) | Self::ContainsCi(_, is_pos) |
-      Self::StartsWithCs(_, is_pos) | Self::EndsWithCs(_, is_pos) | Self::ContainsCs(_, is_pos) => is_pos,
+      Self::StartsWithCi(_, is_pos) | Self::EndsWithCi(_, is_pos) | Self::ContainsCi(_, is_pos) | Self::WholeCi(_, is_pos) |
+      Self::StartsWithCs(_, is_pos) | Self::EndsWithCs(_, is_pos) | Self::ContainsCs(_, is_pos) | Self::WholeCs(_, is_pos) => is_pos,
     }.to_owned()
   }
 
@@ -65,6 +72,13 @@ impl<'a> StringBounds<'a> {
   pub fn ends_with(&self) -> bool {
     match self {
       Self::EndsWithCi(..) | Self::EndsWithCs(..) => true,
+      _ => false
+    }
+  }
+
+  pub fn matches_whole(&self) -> bool {
+    match self {
+      Self::WholeCi(..) | Self::WholeCs(..) => true,
       _ => false
     }
   }

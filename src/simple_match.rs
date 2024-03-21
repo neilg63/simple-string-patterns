@@ -127,6 +127,8 @@ impl SimpleMatchesMany for str {
         base.starts_with(&pattern)
       } else if item.ends_with() {
         base.ends_with(&pattern)
+      } else if item.matches_whole() {
+        base == pattern
       } else {
         base.contains(&pattern)
       } == item.is_positive();
@@ -167,6 +169,41 @@ impl SimpleMatchAll for str {
   // test for multiple conditions. All other 'many' trait methods are derived from this
   fn match_all_conditional(&self, pattern_sets: &[StringBounds]) -> bool {
     self.matched_conditional(pattern_sets).into_iter().all(|matched| matched)
+  }
+
+}
+
+/// Test for any of multiple pattern rules and return boolean
+pub trait SimpleMatchAny where Self:SimpleMatchesMany {
+
+  /// test for multiple conditions. All other trait methods are derived from this
+  fn match_any_conditional(&self, pattern_sets: &[StringBounds]) -> bool;
+
+  /// test for multiple conditions with simple tuple pairs of pattern + case-insenitive flag
+  fn contains_any_conditional(&self, pattern_sets: &[(&str, bool)]) -> bool {
+    let pattern_sets: Vec<StringBounds> = pairs_to_string_bounds(pattern_sets, 2);
+    self.match_any_conditional(&pattern_sets)
+  }
+
+  /// Test for presecnce of simple patterns in case-insensitive mode
+  fn contains_any_conditional_ci(&self, patterns: &[&str]) -> bool {
+    let pattern_sets: Vec<StringBounds> = strs_to_string_bounds(patterns, true, 2);
+    self.match_any_conditional(&pattern_sets)
+  }
+
+  /// Test for presecnce of simple patterns in case-sensitive mode
+  fn contains_any_conditional_cs(&self, patterns: &[&str]) -> bool {
+    let pattern_sets: Vec<StringBounds> = strs_to_string_bounds(patterns, false, 2);
+    self.match_any_conditional(&pattern_sets)
+  }
+  
+}
+
+impl SimpleMatchAny for str {
+
+  // test for multiple conditions. All other 'many' trait methods are derived from this
+  fn match_any_conditional(&self, pattern_sets: &[StringBounds]) -> bool {
+    self.matched_conditional(pattern_sets).into_iter().any(|matched| matched)
   }
 
 }
@@ -246,7 +283,7 @@ impl SimplContainsType for str {
 }
 
 
-/// Test multiple patterns and return a filtered vector of string slices
+/// Test multiple patterns and return a filtered vector of string slices by all pattern rules
 pub trait SimpleFilterAll<'a, T> {
 
   /// test for multiple conditions. All other trait methods are derived from this
@@ -269,6 +306,33 @@ impl<'a> SimpleFilterAll<'a, String> for [String] {
   // filter strings by multiple conditions
   fn filter_all_conditional(&'a self, pattern_sets: &[StringBounds]) -> Vec<String> {
     self.into_iter().filter(|s| s.match_all_conditional(pattern_sets)).map(|s| s.to_owned()).collect::<Vec<String>>()
+  }
+
+}
+
+/// Test multiple patterns and return a filtered vector of string slices by any of the pattern rules
+pub trait SimpleFilterAny<'a, T> {
+
+  /// test for multiple conditions. All other trait methods are derived from this
+  fn filter_any_conditional(&'a self, pattern_sets: &[StringBounds]) -> Vec<T>;
+  
+}
+
+/// Filter strings by one or more StringBounds rules
+impl<'a> SimpleFilterAny<'a, &'a str> for [&str] {
+
+  // filter string slices by multiple conditions
+  fn filter_any_conditional(&'a self, pattern_sets: &[StringBounds]) -> Vec<&'a str> {
+    self.into_iter().map(|s| s.to_owned()).filter(|s| s.match_any_conditional(pattern_sets)).collect::<Vec<&'a str>>()
+  }
+
+}
+
+/// Variant implementation for owned strings
+impl<'a> SimpleFilterAny<'a, String> for [String] {
+  // filter strings by multiple conditions
+  fn filter_any_conditional(&'a self, pattern_sets: &[StringBounds]) -> Vec<String> {
+    self.into_iter().filter(|s| s.match_any_conditional(pattern_sets)).map(|s| s.to_owned()).collect::<Vec<String>>()
   }
 
 }
