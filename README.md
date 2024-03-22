@@ -8,7 +8,7 @@ This library makes it easier to match, split and extract strings in Rust. It bui
 
 Simpler string matching methods such as starts_with, contains or ends_with will always perform better, especially when processing large data sets. To this end, the crate provides methods such as *starts_with_ci* and *starts_with_ci_alphanum* for basic string validation without regular expressions as well as extension methods to split strings into vectors of strings or a *head* and *tail* components.
 
-Version 0.3.0 sees a radical revision of the enums used to define string matching rules in the methods matched_by_rules(), matched_conditional(), filter_all_rules() and filter_any_rules().
+Version 0.3.0 sees a radical revision of the enums used to define string matching rules in the *matched_by_rules()*, *matched_conditional()*, *filter_all_rules()* and *filter_any_rules()* methods.
 
 ### Method overview
 - Many methods without *_ci* or *_cs* suffixes require a boolean *case_insensitive* parameter
