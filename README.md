@@ -343,6 +343,8 @@ This crate serves as a building block for other crates as well as to supplement 
 ##### *Version 0.3.0* expands the range of rules available BoundsBuilder
 As this version introduces a radical revision to the StringBouunds enum with new enums for BoundsPosition and CaseMatchMode that affect an expanded range of rules available via *bounds_builder()* for use with matched_by_rules(), filter_all_rules() and filter_any_rules().
 
+Full documentation for the 0.2.* series is available in the [Github repo](https://github.com/neilg63/simple-string-patterns) in the *v0-2* branch.
+
 ##### *Version 0.2.5* introduces SimpleMatchAny and Whole matches in StringBounds.
 
 This supplements SimpleMatchAll to apply *or* logic with rules sets (StringBound, tuples or simple strs). The StringBounds enum now has whole string match options (with case-insensitive and case-sensitive variants) to accommodate a mix of partial and whole string matches.
