@@ -118,35 +118,26 @@ let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
 // Call .as_vec() at the end
 let mixed_conditions = bounds_builder()
   .containing_ci("nepal")
-  .ending_with_ci(".jpg")
-  .as_vec();
+  .ending_with_ci(".jpg");
 
 let sample_name_1 = "picture-Nepal-1978.jpg";
 let sample_name_1 = "edited_picture-Nepal-1978.psd";
 
 // contains `nepal` and ends with .jpg
-sample_name_1.match_all_conditional(&mixed_conditions); // true
+sample_name_1.match_all_rules(&mixed_conditions); // true
 
 // contains `nepal` but does not end with .jpg
-sample_name_2.match_all_conditional(&mixed_conditions); // false
+sample_name_2.match_all_rules(&mixed_conditions); // false
 
 // contains `nepal` and/or .jpg
-sample_name_1.match_any_conditional(&mixed_conditions); // true
+sample_name_1.match_any_rules(&mixed_conditions); // true
 
 // contains `nepal` and/or .jpg
-sample_name_2.match_any_conditional(&mixed_conditions); // true
+sample_name_2.match_any_rules(&mixed_conditions); // true
 ```
 
 ##### Filter by all pattern rules without regular expressions
 ```rust
-// Match only file names that contain the character sequence "nepal" and do not end in .psd 
-// This is very useful for prefiltering large sets of simple strings 
-// representing things like file names.
-// Ci, Cs suffixes mean case-insensitive and case-sensitive respectively
-let mixed_conditions = [
-  StringBounds::ContainsCi("nepal", true),
-  StringBounds::EndsWithCi(".psd", false),
-];
 
 // The same array may also be expressed via the new bounds_builder() function with chainable rules:
 // You may call .as_vec() to convert to a vector of StringBounds rules as used by methods ending in _conditional
