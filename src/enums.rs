@@ -2,83 +2,107 @@
 /// and accepting the string pattern and positivity flag as arguments
 #[derive(Debug, Clone)]
 pub enum StringBounds<'a> {
-  StartsWithCi(&'a str, bool),
-  EndsWithCi(&'a str, bool),
-  ContainsCi(&'a str, bool),
-  StartsWithCs(&'a str, bool),
-  EndsWithCs(&'a str, bool),
-  ContainsCs(&'a str, bool),
-  WholeCi(&'a str, bool),
-  WholeCs(&'a str, bool)
+  StartsWith(&'a str, bool, CaseMatchMode),
+  EndsWith(&'a str, bool, CaseMatchMode),
+  Contains(&'a str, bool, CaseMatchMode),
+  Whole(&'a str, bool, CaseMatchMode),
+  And(Vec<StringBounds<'a>>),
+  Or(Vec<StringBounds<'a>>)
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum BoundsPosition {
+  Starts,
+  Ends,
+  Contains,
+  Whole
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CaseMatchMode {
+  Sensitive,
+  Insensitive,
+  AlphanumInsensitive,
+}
+
+impl CaseMatchMode {
+  pub fn insensitive(case_insensitive: bool) -> Self {
+    if case_insensitive { 
+      Self::Insensitive
+    } else {
+      Self::Sensitive
+    }
+  }
 }
 
 impl<'a> StringBounds<'a> {
 
   // Only used internally in utils
   // 0: starts with, 1 ends with, 2 (default) contains, 3 whole
-  pub fn new(mode: u8, txt: &'a str, is_positive: bool, case_insensitive: bool) -> StringBounds<'a> {
+  pub fn new(mode: BoundsPosition, txt: &'a str, is_positive: bool, case_mode: CaseMatchMode) -> StringBounds<'a> {
     match mode {
-      0 => if case_insensitive {
-        Self::StartsWithCi(txt, is_positive)
-      } else {
-        Self::StartsWithCs(txt, is_positive)
-      },
-      1 => if case_insensitive {
-        Self::EndsWithCi(txt, is_positive)
-      } else {
-        Self::EndsWithCs(txt, is_positive)
-      },
-      3 => if case_insensitive {
-        Self::WholeCi(txt, is_positive)
-      } else {
-        Self::WholeCs(txt, is_positive)
-      },
-      _ => if case_insensitive {
-        Self::ContainsCi(txt, is_positive)
-      } else {
-        Self::ContainsCs(txt, is_positive)
-      },
+      BoundsPosition::Starts =>  Self::StartsWith(txt, is_positive, case_mode),
+      BoundsPosition::Ends => Self::EndsWith(txt, is_positive, case_mode),
+      BoundsPosition::Whole => Self::Whole(txt, is_positive, case_mode),
+      _ => Self::Contains(txt, is_positive, case_mode),
     }
   }
 
   pub fn case_insensitive(&self) -> bool {
     match self {
-      Self::StartsWithCi(..) | Self::EndsWithCi(..) | Self::ContainsCi(..) | Self::WholeCi(..) => true,
+      Self::StartsWith(_, _, cm) | Self::EndsWith(_, _, cm) | Self::Contains(_, _, cm) | Self::Whole(_, _, cm) => {
+        match cm {
+          CaseMatchMode::Sensitive => false,
+          _ => true,
+        }
+      },
       _ => false, 
+    }
+  }
+
+  pub fn case_mode(&self) -> CaseMatchMode {
+    match self {
+      Self::StartsWith(_, _, cm) | Self::EndsWith(_, _, cm) | Self::Contains(_, _, cm) | Self::Whole(_, _, cm) => {
+        *cm
+      },
+      _ => CaseMatchMode::Sensitive, 
     }
   }
 
   pub fn pattern(&self) -> &'a str {
     match self {
-      Self::StartsWithCi(txt, _) | Self::EndsWithCi(txt, _) | Self::ContainsCi(txt, _) | Self::WholeCi(txt, _) |
-      Self::StartsWithCs(txt, _) | Self::EndsWithCs(txt, _) | Self::ContainsCs(txt, _ ) | Self::WholeCs(txt, _) => txt,
+      Self::StartsWith(txt, _, _) | Self::EndsWith(txt, _, _) |
+      Self::Contains(txt, _, _) | Self::Whole(txt, _, _)
+      => txt,
+      _ => &""
     }.to_owned()
   }
 
   pub fn is_positive(&self) -> bool {
     match self {
-      Self::StartsWithCi(_, is_pos) | Self::EndsWithCi(_, is_pos) | Self::ContainsCi(_, is_pos) | Self::WholeCi(_, is_pos) |
-      Self::StartsWithCs(_, is_pos) | Self::EndsWithCs(_, is_pos) | Self::ContainsCs(_, is_pos) | Self::WholeCs(_, is_pos) => is_pos,
+      Self::StartsWith(_, is_pos, _) | Self::EndsWith(_, is_pos, _) |
+      Self::Contains(_, is_pos, _) | Self::Whole(_, is_pos, _) => is_pos,
+      _ => &false,
     }.to_owned()
   }
 
   pub fn starts_with(&self) -> bool {
     match self {
-      Self::StartsWithCi(..) | Self::StartsWithCs(..) => true,
+      Self::StartsWith(..) => true,
       _ => false
     }
   }
 
   pub fn ends_with(&self) -> bool {
     match self {
-      Self::EndsWithCi(..) | Self::EndsWithCs(..) => true,
+      Self::EndsWith(..) => true,
       _ => false
     }
   }
 
   pub fn matches_whole(&self) -> bool {
     match self {
-      Self::WholeCi(..) | Self::WholeCs(..) => true,
+      Self::Whole(..)=> true,
       _ => false
     }
   }

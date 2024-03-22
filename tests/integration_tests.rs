@@ -15,12 +15,59 @@ fn test_simple_filter_all() {
     "Cat image",
     "cat Picture",
   ];
-  let conditions = [
-    StringBounds::StartsWithCi("cat", true),
-    StringBounds::ContainsCi("video", false)
-  ];
+
+  let conditions = bounds_builder()
+      .starting_with_ci("cat")
+      .not_containing_ci("video").as_vec();
   assert_eq!(source_strs.filter_all_conditional(&conditions), target_strs);
 }
+
+#[test]
+fn test_nested_rules_with_filter_all() {
+  let source_strs = [
+    "_Cat image.jpg",
+    "-dog picture.png",
+    "_DOG pc.jpg",
+    "elephant image.psd",
+    "CAT_Video.mp4",
+    "lion Picture.jpg",
+  ];
+  let target_strs = [
+    "_Cat image.jpg",
+    "_DOG pc.jpg",
+  ];
+  let patterns = vec!["cat", "dog"];
+  let conditions = bounds_builder()
+      .or_starting_with_ci_alphanum(&patterns)
+      .ending_with_ci(".jpg");
+  assert_eq!(source_strs.filter_all_rules(&conditions), target_strs);
+}
+
+
+#[test]
+fn test_nested_rules_with_filter_any() {
+  let source_strs = [
+    "_Cat image.jpg",
+    "-dog picture.png",
+    "_DOG pc.jpg",
+    "elephant image.psd",
+    "CAT_Video.mp4",
+    "lion Picture.jpg",
+  ];
+  let target_strs = [
+    "_Cat image.jpg",
+    "elephant image.psd",
+  ];
+  let conditions = bounds_builder()
+      .and(
+        bounds_builder()
+        .starting_with_ci_alphanum("cat")
+        .ending_with_ci(".jpg")
+      )
+      .ending_with_ci(".psd");
+  assert_eq!(source_strs.filter_any_rules(&conditions), target_strs);
+}
+
 
 
 #[test]
@@ -280,9 +327,9 @@ fn test_correct_floats() {
 #[test]
 fn test_matched_conditional() {
   let conditions = [
-    StringBounds::StartsWithCi("jan", true),
-    StringBounds::EndsWithCi("images", true),
-    StringBounds::ContainsCi("2023", true),
+    StringBounds::StartsWith("jan", true, CaseMatchMode::Insensitive),
+    StringBounds::EndsWith("images", true, CaseMatchMode::Insensitive),
+    StringBounds::Contains("2023", true, CaseMatchMode::Insensitive),
   ];
 
   let folder_1 = "Jan_2023_IMAGES";
@@ -312,10 +359,11 @@ fn test_matched_conditional() {
     "pic_nepal_Dec-2004.png"
   ];
 
-  let mixed_conditions = [
-    StringBounds::ContainsCi("nepal", true),
-    StringBounds::EndsWithCi(".psd", false),
-  ];
+
+  let mixed_conditions = bounds_builder()
+    .containing_ci("nepal")
+    .not_ending_with_ci(".psd")
+    .as_vec();
 
   let file_name_a = file_names[0];
   let file_name_b = file_names[2];
@@ -343,10 +391,10 @@ fn test_matched_conditional() {
 #[test]
 fn test_matched_any_conditional() {
   let false_conditions = [
-    StringBounds::WholeCi("no", true),
-    StringBounds::WholeCi("false", true),
-    StringBounds::ContainsCi("not", true),
-    StringBounds::ContainsCi("negative", true),
+    StringBounds::Whole("no", true, CaseMatchMode::Insensitive),
+    StringBounds::Whole("false", true, CaseMatchMode::Insensitive),
+    StringBounds::Contains("not", true, CaseMatchMode::Insensitive),
+    StringBounds::Contains("negative", true, CaseMatchMode::Insensitive),
   ];
 
   let boolean_strs_1 = [

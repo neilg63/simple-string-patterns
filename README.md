@@ -8,10 +8,15 @@ This library makes it easier to match, split and extract strings in Rust. It bui
 
 Simpler string matching methods such as starts_with, contains or ends_with will always perform better, especially when processing large data sets. To this end, the crate provides methods such as *starts_with_ci* and *starts_with_ci_alphanum* for basic string validation without regular expressions as well as extension methods to split strings into vectors of strings or a *head* and *tail* components.
 
+Version 0.3.0 sees a radical revision of the enums used to define string matching rules in the methods matched_by_rules(), matched_conditional(), filter_all_rules() and filter_any_rules().
+
 ### Method overview
 - Many methods without *_ci* or *_cs* suffixes require a boolean *case_insensitive* parameter
 - Methods ending in *_cs* are case-sensitive
 - Methods ending in *_ci* are case-insensitive
+- Methods ending in *_ci_alphanum* are case-insensitive and remove all non-alphanumeric letters from the sample string before camparison
+- Methods ending in *_rules* accept a *BoundsBuilder* object created via bounds_builder()
+- Methods ending in *_conditional* accept an array of *StringBounds* rules
 - Methods containing *_split* return either a vector or tuple pair.
 - Methods containing *_part(s)* always include leading or trailing separators and may return empty elements in vectors
 - Methods containing *_segment(s)* ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
@@ -55,7 +60,6 @@ let strings_starting_with_blue = sample_strs
 // should return all except "Blueberry"
 ```
 
-
 ##### Extract the third non-empty segment of a long path name
 ```rust
 let path_string = "/var/www/mysite.com/web/uploads";
@@ -73,7 +77,6 @@ println!("Head: {}, tail: {}", head, tail); // Head: long, tail: list-of-technic
 let (start, end) = test_string.to_start_end("-");
 println!("Start: {}, end: {}", start, end); // Start: long-list-of-technical, end: words
 ```
-
 
 ##### Capture an inner segment via multiple patterns
 ```rust
@@ -146,11 +149,10 @@ let mixed_conditions = [
 ];
 
 // The same array may also be expressed via the new bounds_builder() function with chainable rules:
-// Call .as_vec() at the end
+// You may call .as_vec() to convert to a vector of StringBounds rules as used by methods ending in _conditional
 let mixed_conditions = bounds_builder()
   .containing_ci("nepal")
-  .not_ending_with_ci(".psd")
-  .as_vec();
+  .not_ending_with_ci(".psd");
 
 let file_names = [
   "edited-img-Nepal-Feb-2003.psd",
@@ -159,11 +161,39 @@ let file_names = [
   "image-India-Mar-2003.jpg",
   "pic_nepal_Dec-2004.png"
 ];
-  
-let nepal_source_files: Vec<&str> = file_names.filter_all_conditional(&mixed_conditions);
+/// The filter_all_rules() method accepts a *BoundsBuilder* object.
+let nepal_source_files: Vec<&str> = file_names.filter_all_rules(&mixed_conditions);
 // should yield two file names: ["photo_Nepal_Jan-2005.jpg", "pic_nepal_Dec-2004.png"]
 // This will now return Vec<&str> or Vec<String> depending on the source string type.
 ```
+
+##### Nested Rule Sets
+As of verson 0.3.0 you may add nested rule sets with *and* / *or* logic. The former case is true only if all conditions are met, while the latter is true if any of the conditions are met. The *BoundsBuilder* struct now has a set of methods starting with *and* or *or*. You may call *and(rules: BoundsBuilder)* or *or(rules: BoundsBuilder)* directly with a nested rule set if you have a mix of rule types. However, if all rules have the same bounds, other methods accepting a simple array of patterns are available, e.g.
+- or_starts_with_ci(patterns: &[&str])
+- or_starts_with_ci_alphanum(patterns: &[&str])
+- or_contains_ci(patterns: &[&str])
+- or_ends_with_ci(patterns: &[&str])
+
+```rust
+
+let filenames = [
+  "my_rabbit_2019.webp",
+  "my_CaT_2020.jpg",
+  "neighbours_Dog_2021.gif",
+  "daughters_Dog_2023.jpeg",
+  "big cat.psd"
+];
+
+/// Match files containing the letter sequences "cat" or "dog" and ending in ".jpg" or ".jpeg";
+let rules = bounds_builder()
+  .or_contains_ci(&["cat", "dog"])
+  .or_ends_with(&[".jpg", ".jpeg"]);
+
+let matched_files = filenames.filter_all_rules(&rules);
+/// Should yield an array with "my_CaT_2020.jpg" and "daughters_Dog_2023.png"
+```
+The above example reproduces the following example *regular expression* /(cat|dog).*?\.jpe?g$/. The _alphanum-suffixed variants let match only on numbers and letters within a string, i.e. ignorning any spaces or punctuation.
+
 
 ##### Filter by any pattern rules without regular expressions
 ```rust
@@ -260,16 +290,17 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 - **ToSegmentFromChars**: Splits strings into parts on any of any array of characters
 
 ### Enums
-- **StringBounds**: Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::ContainsCi("report", true) or StringBounds::EndsWithCi(".docx", false). The *Ci* and *Cs* variants affect case-sensitivity.
+- *CaseMatchMode*
+  Options
+  - **Sensitive**: Case sensitive
+  - **Insensitive**: Case-insensitive, will cast both the needle and haystack all strings to lower case for comparison
+  - **AlphaNumInsensitive**: Will strip all non-alphanumeric characters from the sample string and cast both the needle and haystack to lower case for comparison
+- **StringBounds**: Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::Contains("report", true, CaseMatchMode::Insensitive) or StringBounds::EndsWith(".docx", CaseMatchMode::Insensitive). The *bounds_builder* method helps build these rule sets.
   Options:
-  - StartsWithCi(&str, bool) case-insensitive *starts with* + boolean positivity flag
-  - EndsWithCi(&str, bool) case-insensitive *ends with* + is_positive flag
-  - ContainsCi(&str, bool) case-insensitive *contains* + is_positive flag
-  - WholeCi(&str, bool) case-insensitive whole string match + is_positive flag
-  - StartsWithCs(&str, bool) case-sensitive *starts with* + is_positive flag
-  - EndsWithCs(&str, bool) case-sensitive *ends with* + is_positive flag
-  - ContainsCs(&str, bool) case-sensitive *contains* + is_positive flag
-  - WholeCs(&str, bool) case-sensitive whole string match + is_positive flag
+  - StartsWith(&str, bool, CaseMatchMode) *starts with* + boolean positivity and CaseMatchMode flags
+  - EndsWith(&str, bool, CaseMatchMode) case-insensitive *ends with* + is_positive flag
+  - Contains(&str, bool, CaseMatchMode) case-insensitive *contains* + is_positive flag
+  - Whole(&str, bool, CaseMatchMode) case-insensitive whole string match + is_positive flag
 - **CharType**: Defines categories, sets or ranges of characters as well as single characters.
   - Any: will match any characters
   - DecDigit => Match 0-9 only (is_ascii_digit)
@@ -291,12 +322,14 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 #### BoundsBuilder
 This serves only as a more elegant way to build string matching rules via chained methods.
 - *starting_with_ci(pattern: &str)* => Start with a pattern in case-insensitive mode
-- *starting_with_cs(pattern: &str)* => Start with a pattern in case-sensitive mode
+- *starting_with_ci_alphanum(pattern: &str)* => Start with a pattern in case-insensitive mode
+- *starting_with_cs(pattern: &str)* => Start with a pattern in case-sensitive mode after stripping all non-alphanumeric characters
 - *not_starting_with_ci(pattern: &str)* => Does not start with a pattern in case-insensitive mode
 - *not_starting_with_cs(pattern: &str)* => Does not start with a pattern in case-sensitive mode
 - *containing_ci(pattern: &str)* => Contains a pattern in case-insensitive mode
 - *containing_cs(pattern: &str)* => Contains a pattern in case-sensitive mode
 - *not_containing_ci(pattern: &str)* => Does not contain a pattern in case-insensitive mode
+- *not_containing_ci_alphanum(pattern: &str)* => Does not contain a pattern in case-insensitive mode after stripping all non-alphanumeric characters
 - *not_containing_cs(pattern: &str)* => Does not contain a pattern in case-sensitive mode
 - *is_ci(pattern: &str)* => Matches a whole pattern in case-insensitive mode
 - *is_cs(pattern: &str)* => Matches a whole  pattern in case-sensitive mode
@@ -307,15 +340,19 @@ This serves only as a more elegant way to build string matching rules via chaine
 
 This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
 
-Version 0.2.2 introduces three new features:
-- *bounds_builder()* makes it easier to define string matching rules methods requiring an array of *StringBounds* rules such as filter_all_conditional(). See example above.
-- *ToSegmentFromChars* provides new methods to split on any of an array of characters, e.g. when processing common patterns that may use a predictable set of separators. This mimics characters classes in regular expressions and is more efficient when you only need to allow for a limited set of split characters.
-- *MatchOccurrences* has a variant *find_char_indices* method that accepts a *char* rather than a *&str*. This avoids any need to cast a character to a string.
+##### *Version 0.3.0* expands the range of rules available BoundsBuilder
+As this version introduces a radical revision to the StringBouunds enum with new enums for BoundsPosition and CaseMatchMode that affect an expanded range of rules available via *bounds_builder()* for use with matched_by_rules(), filter_all_rules() and filter_any_rules().
 
-*Version 0.2.5* introduces SimpleMatchAny and Whole matches in StringBounds.
+##### *Version 0.2.5* introduces SimpleMatchAny and Whole matches in StringBounds.
 
 This supplements SimpleMatchAll to apply *or* logic with rules sets (StringBound, tuples or simple strs). The StringBounds enum now has whole string match options (with case-insensitive and case-sensitive variants) to accommodate a mix of partial and whole string matches.
 
 It also adds a range of simple single-argument methods for bounds_builder().
 
 Versions of the *string-patterns* crate before 0.3.0 contained many of these extensions. Since version 0.3.0 all traits, enums and methods defined in this *simple-string-patterns* have been removed. These crates supplement each other, but may be installed independently.
+
+##### Version 0.2.2 introduces three new features:
+- *bounds_builder()* makes it easier to define string matching rules methods requiring an array of *StringBounds* rules such as filter_all_conditional(). See example above.
+- *ToSegmentFromChars* provides new methods to split on any of an array of characters, e.g. when processing common patterns that may use a predictable set of separators. This mimics characters classes in regular expressions and is more efficient when you only need to allow for a limited set of split characters.
+- *MatchOccurrences* has a variant *find_char_indices* method that accepts a *char* rather than a *&str*. This avoids any need to cast a character to a string.
+
