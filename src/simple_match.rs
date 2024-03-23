@@ -109,6 +109,9 @@ pub trait SimpleMatchesMany where Self:SimpleMatch {
   
 }
 
+/*
+* Common function to match scalar StringBounds rules
+*/
 pub(crate) fn match_bounds_rule(txt: &str, item: &StringBounds) -> bool {
   let cm = item.case_mode();
   let ci = item.case_insensitive();
@@ -140,18 +143,24 @@ pub(crate) fn match_bounds_rule(txt: &str, item: &StringBounds) -> bool {
   is_matched
 }
 
+/*
+* Common function to match StringBounds rule sets handling  both and/or sub  rules and scalar rules
+*/
+pub(crate) fn match_bound_rule_set(txt: &str, item: &StringBounds) -> bool {
+  match item {
+    StringBounds::And(inner_rules) => txt.matched_conditional(&inner_rules).into_iter().all(|result| result),
+    StringBounds::Or(inner_rules) => txt.matched_conditional(&inner_rules).into_iter().any(|result| result),
+    _ => match_bounds_rule(txt, item)
+  }
+}
+
 impl SimpleMatchesMany for str {
 
   // test for multiple conditions. All other trait methods are derived from this
   fn matched_conditional(&self, pattern_sets: &[StringBounds]) -> Vec<bool> {
     let mut matched_items: Vec<bool> = Vec::with_capacity(pattern_sets.len());
     for item in pattern_sets {
-      let is_matched = match item {
-        StringBounds::And(inner_rules) => self.matched_conditional(&inner_rules).into_iter().all(|result| result),
-        StringBounds::Or(inner_rules) => self.matched_conditional(&inner_rules).into_iter().any(|result| result),
-        _ => match_bounds_rule(self, item)
-      };
-       matched_items.push(is_matched);
+       matched_items.push(match_bound_rule_set(self, item));
      }
      matched_items
    }
@@ -187,7 +196,20 @@ impl SimpleMatchAll for str {
 
   // test for multiple conditions. All other 'many' trait methods are derived from this
   fn match_all_conditional(&self, pattern_sets: &[StringBounds]) -> bool {
-    self.matched_conditional(pattern_sets).into_iter().all(|matched| matched)
+    // self.matched_conditional(pattern_sets).into_iter().all(|matched| matched)
+    if pattern_sets.len() > 0 {
+      for item in pattern_sets {
+        // do not evaluate more rules one is not matched
+        if !match_bound_rule_set(self, item) {
+          return false;
+        }
+      }
+      // return true if one or rules are matched
+      true
+    } else {
+      // return false if no rules are provided
+      false
+    }
   }
 
 }
@@ -220,9 +242,16 @@ pub trait SimpleMatchAny where Self:SimpleMatchesMany {
 
 impl SimpleMatchAny for str {
 
-  // test for multiple conditions. All other 'many' trait methods are derived from this
+  // Test for multiple conditions. All other 'any' trait methods are derived from this
   fn match_any_conditional(&self, pattern_sets: &[StringBounds]) -> bool {
-    self.matched_conditional(pattern_sets).into_iter().any(|matched| matched)
+    for item in pattern_sets {
+      // if one rule is matched, return true as other rules need not be evaluated
+      if match_bound_rule_set(self, item) {
+        return true;
+      }
+    }
+    // return false if no rules are matched or provided
+    false
   }
 
 }
