@@ -11,7 +11,7 @@ Simpler string matching methods such as *starts_with, contains or ends_with* wil
 Version 0.3.0 sees a radical revision of the enums used to define string matching rules in the *matched_by_rules()*, *matched_conditional()*, *filter_all_rules()* and *filter_any_rules()* methods.
 
 ## Simple Patterns versus Regular Expressions
-Regukar expression engines such as Rust's *regex* crates have been optimised. Under the hood they will translate regular expressions into the most efficient string matching algorithm. The main advantage of *simple-string-patterns* is clarity. When applying only basic transformations with case insensitive matching from the start of string, methods such as *contains_ci* may perform better than their regex equivalents, but when applying multiple rules, their main advantage lies in their clarity. Indeed, in some preliminary benchmarks more concise regular expressions may perform better, but are harder to debug. If you need to add multiple nested rules, a *regex* may perform better and the sibling *string-patterns* crate makes this very easy. However, in small utilities that need to process large volumes of strings with variable but highly predictable formats, e.g. in cryptography, this crate has the advantage of expanding the standard library with minimal additional overhead and greater readability.
+The main advantages of *simple-string-patterns* lie in its readability and miniminal additional overhead in lightweight applications that would not otherwise need regex support. Under the hood, regular expression engines they will translate regular expressions into efficient string matching algorithm, one character at a time. Premilinary benchmarks, show that rule sets with basic matching methods such as *contains_ci* perform better than their regex counterparts, but if you need to add multiple nested rules, a *regex* may perform better. The sibling regex-powered *string-patterns* crate makes this very easy. However, this crate is best suited to small utilities that need to process large quantities of strings with a range of highly predictable formats, e.g. in cryptography, logging.
 
 ### Method overview
 - Many methods without *_ci* or *_cs* suffixes require a boolean *case_insensitive* parameter
@@ -20,11 +20,11 @@ Regukar expression engines such as Rust's *regex* crates have been optimised. Un
 - Methods ending in *_ci_alphanum* are case-insensitive and remove all non-alphanumeric letters from the sample string before camparison
 - Methods ending in *_rules* accept a *BoundsBuilder* object created via bounds_builder()
 - Methods ending in *_conditional* accept an array of *StringBounds* rules
-- Methods containing *filter_all* filter arrays or vectors that match all of the rules (and logic)
-- Methods containing *filter_any* filter arrays or vectors that match any of the rules (or logic)
-- Methods containing _split return either a vector or tuple pair.
-- Methods containing _part(s) always include leading or trailing separators and may return empty elements in vectors
-- Methods containing _segment(s) ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
+- Methods with *filter_all* filter arrays or vectors that match all of the rules (and logic)
+- Methods with *filter_any* filter arrays or vectors that match any of the rules (or logic)
+- Methods with *_split* return either a vector or tuple pair.
+- Methods with *_part(s)* always include leading or trailing separators and may return empty elements in vectors
+- Methods with *_segment(s)* ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
 - In tuples returned from segment(s) and part(s) methods, head means the segment before the first split and tail the remainder, while start means the whole string before the last split and end only the last part of the last matched separator.
 - Enclose or wrap methods ending in *_escaped* have an optional escape character parameter
 - Enclose or wrap methods ending in *_safe* insert a backslash before the any non-final occurrences of the closing characters unless already present
