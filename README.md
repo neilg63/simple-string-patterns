@@ -6,9 +6,12 @@
 
 This library makes it easier to match, split and extract strings in Rust. It builds on the Rust standard library. A parallel [string-patterns](https://crates.io/crates/string-patterns) crate provides extensions to work with *regular expressions*. Together, these crates aim to make working with strings as easy in Rust as it is Javascript or Python with cleaner syntax.
 
-Simpler string matching methods such as starts_with, contains or ends_with will always perform better, especially when processing large data sets. To this end, the crate provides methods such as *starts_with_ci* and *starts_with_ci_alphanum* for basic string validation without regular expressions as well as extension methods to split strings into vectors of strings or a *head* and *tail* components.
+Simpler string matching methods such as *starts_with, contains or ends_with* will always perform better, especially when processing large data sets. Methods such as *starts_with_ci* and *starts_with_ci_alphanum* build on these core methods to facilitate string manipulation without *regular expressions*.
 
 Version 0.3.0 sees a radical revision of the enums used to define string matching rules in the *matched_by_rules()*, *matched_conditional()*, *filter_all_rules()* and *filter_any_rules()* methods.
+
+## Simple Patterns versus Regular Expressions
+Regukar expression engines such as Rust's *regex* crates have been optimised. Under the hood they will translate regular expressions into the most efficient string matching algorithm. The main advantage of *simple-string-patterns* is clarity. When applying only basic transformations with case insensitive matching from the start of string, methods such as *contains_ci* may perform better than their regex equivalents, but when applying multiple rules, their main advantage lies in their clarity. Indeed, in some preliminary benchmarks more concise regular expressions may perform better, but are harder to debug. If you need to add multiple nested rules, a *regex* may perform better and the sibling *string-patterns* crate makes this very easy. However, in small utilities that need to process large volumes of strings with variable but highly predictable formats, e.g. in cryptography, this crate has the advantage of expanding the standard library with minimal additional overhead and greater readability.
 
 ### Method overview
 - Many methods without *_ci* or *_cs* suffixes require a boolean *case_insensitive* parameter
@@ -17,10 +20,12 @@ Version 0.3.0 sees a radical revision of the enums used to define string matchin
 - Methods ending in *_ci_alphanum* are case-insensitive and remove all non-alphanumeric letters from the sample string before camparison
 - Methods ending in *_rules* accept a *BoundsBuilder* object created via bounds_builder()
 - Methods ending in *_conditional* accept an array of *StringBounds* rules
-- Methods containing *_split* return either a vector or tuple pair.
-- Methods containing *_part(s)* always include leading or trailing separators and may return empty elements in vectors
-- Methods containing *_segment(s)* ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
-- In tuples returned from *segment(s)* and *part(s)* methods, *head* means the segment before the first split and tail the remainder, while *start* means the whole string before the last split and *end* only the last part of the last matched separator.
+- Methods containing *filter_all* filter arrays or vectors that match all of the rules (and logic)
+- Methods containing *filter_any* filter arrays or vectors that match any of the rules (or logic)
+- Methods containing _split return either a vector or tuple pair.
+- Methods containing _part(s) always include leading or trailing separators and may return empty elements in vectors
+- Methods containing _segment(s) ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
+- In tuples returned from segment(s) and part(s) methods, head means the segment before the first split and tail the remainder, while start means the whole string before the last split and end only the last part of the last matched separator.
 - Enclose or wrap methods ending in *_escaped* have an optional escape character parameter
 - Enclose or wrap methods ending in *_safe* insert a backslash before the any non-final occurrences of the closing characters unless already present
 
@@ -183,8 +188,7 @@ let rules = bounds_builder()
 let matched_files = filenames.filter_all_rules(&rules);
 /// Should yield an array with "my_CaT_2020.jpg" and "daughters_Dog_2023.png"
 ```
-The above example reproduces the following example *regular expression* /(cat|dog).*?\.jpe?g$/. The _alphanum-suffixed variants let match only on numbers and letters within a string, i.e. ignorning any spaces or punctuation.
-
+The above example reproduces the following example *regular expression* /(cat|dog).*?\.jpe?g$/. The _alphanum-suffixed variants let match only on numbers and letters within a string, i.e. ignorning any spaces or punctuation. 
 
 ##### Filter by any pattern rules without regular expressions
 ```rust
