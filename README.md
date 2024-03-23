@@ -285,12 +285,14 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 - **ToSegmentFromChars**: Splits strings into parts on any of any array of characters
 
 ### Enums
-- **CaseMatchMode** Defines case-sensitivity mode
+- **CaseMatchMode**: Defines case-sensitivity mode
+
   Options:
   - **Sensitive**: Case sensitive
-  - **Insensitive**: Case-insensitive, will cast both the needle and haystack all strings to lower case for comparison
-  - **AlphanumInsensitive**: Will strip all non-alphanumeric characters from the sample string and cast both the needle and haystack to lower case for comparison
+  - **Insensitive**: Case-insensitive, casts both the needle and haystack all strings to lower case for comparison
+  - **AlphanumInsensitive**: Removes all non-alphanumeric characters from the sample string and cast both the needle and haystack to lower case for comparison
 - **StringBounds**: Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::Contains("report", true, CaseMatchMode::Insensitive) or StringBounds::EndsWith(".docx", CaseMatchMode::Insensitive). The *bounds_builder* method helps build these rule sets.
+  
   Options:
   - StartsWith(&str, bool, CaseMatchMode) *starts with* + boolean positivity and CaseMatchMode flags
   - EndsWith(&str, bool, CaseMatchMode) case-insensitive *ends with* + is_positive flag
