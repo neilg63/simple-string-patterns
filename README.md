@@ -347,9 +347,7 @@ Full documentation for the 0.2.* series is available in the [Github repo](https:
 
 ##### *Version 0.2.5* introduces SimpleMatchAny and Whole matches in StringBounds.
 
-This supplements SimpleMatchAll to apply *or* logic with rules sets (StringBound, tuples or simple strs). The StringBounds enum now has whole string match options (with case-insensitive and case-sensitive variants) to accommodate a mix of partial and whole string matches.
-
-It also adds a range of simple single-argument methods for bounds_builder().
+This supplements SimpleMatchAll to apply *or* logic with rules sets (StringBound, tuples or simple strs). The StringBounds enum now has whole string match options (with case-insensitive and case-sensitive variants) to accommodate a mix of partial and whole string matches. It also adds a range of single-argument methods for bounds_builder().
 
 Versions of the *string-patterns* crate before 0.3.0 contained many of these extensions. Since version 0.3.0 all traits, enums and methods defined in this *simple-string-patterns* have been removed. These crates supplement each other, but may be installed independently.
 
