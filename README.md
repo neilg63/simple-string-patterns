@@ -311,7 +311,8 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 ### Structs
 
 #### BoundsBuilder
-This serves only as a more elegant way to build string matching rules via chained methods.
+This struct helps you build string pattern rules for use with the *matched_by_rules()*, *filter_all_rules()* and *filter_any_rules()* methods.
+The *bounds_builder()* function returns a base instance on which you may chain any number of rules and sub-rules.
 - *starting_with_ci(pattern: &str)* => Start with a pattern in case-insensitive mode
 - *starting_with_ci_alphanum(pattern: &str)* => Start with a pattern in case-insensitive mode
 - *starting_with_cs(pattern: &str)* => Start with a pattern in case-sensitive mode after stripping all non-alphanumeric characters
@@ -326,6 +327,8 @@ This serves only as a more elegant way to build string matching rules via chaine
 - *is_cs(pattern: &str)* => Matches a whole  pattern in case-sensitive mode
 - *is_not_ci(pattern: &str)* => Does not match a whole pattern in case-insensitive mode
 - *is_not_cs(pattern: &str)* => Does not match a whole  pattern in case-sensitive mode
+- *and(rules: BoundsBuilder) => Adds a subset of rules with *and* logic.
+- *or(rules: BoundsBuilder) => Adds a subset of rules with *or* logic.
 
 ### Dev Notes
 
