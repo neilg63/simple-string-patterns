@@ -125,7 +125,7 @@ pub trait StripCharacters<'a> {
     }
   }
 
-  /// Removes all characters no used in valid numeric sequences
+  /// Removes all characters not used in valid numeric sequences
   /// with single spaces between numbers
   fn strip_non_numeric(&self) -> String {
     self.to_numeric_strings().join(" ")

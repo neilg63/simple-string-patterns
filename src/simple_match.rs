@@ -146,7 +146,7 @@ pub(crate) fn match_bounds_rule(txt: &str, item: &StringBounds) -> bool {
 /*
 * Common function to match StringBounds rule sets handling  both and/or sub  rules and scalar rules
 */
-pub(crate) fn match_bound_rule_set(txt: &str, item: &StringBounds) -> bool {
+pub(crate) fn match_bounds_rule_set(txt: &str, item: &StringBounds) -> bool {
   match item {
     StringBounds::And(inner_rules) => txt.matched_conditional(&inner_rules).into_iter().all(|result| result),
     StringBounds::Or(inner_rules) => txt.matched_conditional(&inner_rules).into_iter().any(|result| result),
@@ -160,7 +160,7 @@ impl SimpleMatchesMany for str {
   fn matched_conditional(&self, pattern_sets: &[StringBounds]) -> Vec<bool> {
     let mut matched_items: Vec<bool> = Vec::with_capacity(pattern_sets.len());
     for item in pattern_sets {
-       matched_items.push(match_bound_rule_set(self, item));
+       matched_items.push(match_bounds_rule_set(self, item));
      }
      matched_items
    }
@@ -200,7 +200,7 @@ impl SimpleMatchAll for str {
     if pattern_sets.len() > 0 {
       for item in pattern_sets {
         // do not evaluate more rules one is not matched
-        if !match_bound_rule_set(self, item) {
+        if !match_bounds_rule_set(self, item) {
           return false;
         }
       }
@@ -246,7 +246,7 @@ impl SimpleMatchAny for str {
   fn match_any_conditional(&self, pattern_sets: &[StringBounds]) -> bool {
     for item in pattern_sets {
       // if one rule is matched, return true as other rules need not be evaluated
-      if match_bound_rule_set(self, item) {
+      if match_bounds_rule_set(self, item) {
         return true;
       }
     }
