@@ -284,7 +284,7 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 | IsNumeric | Check if the string may be parsed to an integer or float |
 | StripCharacters | Strip unwanted characters by type or extract vectors of numeric strings, integers or floats without regular expressions |
 | SimpleMatch | Match strings without regular expression with common validation rules, e.g. starts_with_ci_alphanum checks if the first letters or numerals in a sample string in case-insensitive mode without regular expressions. |
-| SimpleMatchesMany | Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results. matched_conditional |
+| SimpleMatchesMany | Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results |
 | SimpleMatchAll | Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a boolean if all are matched |
 | SimpleFilterAll | Applies simple regex-free multiple *match* methods to an array or vector of strings and returns a filtered vector of string slices |
 | SimpleEnclose | Wraps strings in pairs of matching characters with variants for different escape character rules |
