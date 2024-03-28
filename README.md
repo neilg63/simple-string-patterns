@@ -319,22 +319,25 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 #### BoundsBuilder
 This struct helps you build string pattern rules for use with the *matched_by_rules()*, *filter_all_rules()* and *filter_any_rules()* methods.
 The *bounds_builder()* function returns a base instance on which you may chain any number of rules and sub-rules.
-- *starting_with_ci(pattern: &str)* => Start with a pattern in case-insensitive mode
-- *starting_with_ci_alphanum(pattern: &str)* => Start with a pattern in case-insensitive mode
-- *starting_with_cs(pattern: &str)* => Start with a pattern in case-sensitive mode after stripping all non-alphanumeric characters
-- *not_starting_with_ci(pattern: &str)* => Does not start with a pattern in case-insensitive mode
-- *not_starting_with_cs(pattern: &str)* => Does not start with a pattern in case-sensitive mode
-- *containing_ci(pattern: &str)* => Contains a pattern in case-insensitive mode
-- *containing_cs(pattern: &str)* => Contains a pattern in case-sensitive mode
-- *not_containing_ci(pattern: &str)* => Does not contain a pattern in case-insensitive mode
-- *not_containing_ci_alphanum(pattern: &str)* => Does not contain a pattern in case-insensitive mode after stripping all non-alphanumeric characters
-- *not_containing_cs(pattern: &str)* => Does not contain a pattern in case-sensitive mode
-- *is_ci(pattern: &str)* => Matches a whole pattern in case-insensitive mode
-- *is_cs(pattern: &str)* => Matches a whole  pattern in case-sensitive mode
-- *is_not_ci(pattern: &str)* => Does not match a whole pattern in case-insensitive mode
-- *is_not_cs(pattern: &str)* => Does not match a whole  pattern in case-sensitive mode
-- *and(rules: BoundsBuilder) => Adds a subset of rules with *and* logic.
-- *or(rules: BoundsBuilder) => Adds a subset of rules with *or* logic.
+
+| Rule type | meaning | arguments | variant suffixes |
+| ---------- | ------- | --------------- | --------------- |
+| starting_with_ + suffix | Starts with a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| containing_ + suffix | Contains a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| ending_with_ + suffix | Ends with a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| is_ + suffix | Matches a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| not_starting_with_ + suffix | Does not start with a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| not_containing_ + suffix | Does not contain a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| not_ending_with_ + suffix | Does not end with a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| is_not_ + suffix | Does not match a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| starts_with | Starting with a pattern | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| contains + suffix | Starting with a pattern | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| ends_with | Starting with a pattern | pattern: &str | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| whole | Matches a whole pattern | pattern: &str | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| or | Matches any of the specified rules | rules: &[BoundsBuilder] | - |
+| or_ + rule_suffix | Matches any of the patterns with the implicit rule | patterns: &[&str] | - |
+| and | Matches all the specified rules | rules: &[BoundsBuilder] | - |
+| and_ + rule_suffix | Matches all of the patterns with the implicit rule | patterns: &[&str] | - |
 
 ### Dev Notes
 
