@@ -320,7 +320,7 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 This struct helps you build string pattern rules for use with the *matched_by_rules()*, *filter_all_rules()* and *filter_any_rules()* methods.
 The *bounds_builder()* function returns a base instance on which you may chain any number of rules and sub-rules.
 
-| Rule type | + suffix? | meaning | arguments | variant suffixes |
+| Rule type | function suffix? | meaning | arguments | variant suffixes |
 | --------- | ------- | ------- | --------- | ---------------- |
 | starting_with_ | ✓ | Starts with | pattern: &str | _ci, _cs, _ci_alphanum |
 | containing_ | ✓ | Contains | pattern: &str | _ci, _cs, _ci_alphanum |
