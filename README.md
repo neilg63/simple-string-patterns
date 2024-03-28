@@ -311,24 +311,24 @@ All options have *pattern: &str*, *is_positive: bool* and *case match mode* flag
 | Whole | (&str, bool, CaseMatchMode) | whole string match |
 
 #### CharType
-Defines categories, sets or ranges of characters as well as single characters.|
+Defines categories, sets or ranges of characters as well as single characters.
 
 | Name | Arguments | Meaning |
 | ---- | --------- | ------- |
 | Any | - | will match any characters |
 | DecDigit | - | Match 0-9 only (is_ascii_digit)|
-| Digit | (u8) | Match digit with the specified radix (e.g. 16 for hexadecimal)|
-| Numeric | - | Match number-like $ in the decimal base. Unlike the is_numeric() extension method this excludes . and -. Use to_numbers_conditional() to extract valid decimal number as strings;|
-| AlphaNum | - | Match any alphanumeric characters (is_alphanumeric)|
-| Lower | - | Match lower case letters (is_lowercase),|
-| Upper | - | Match upper case letters (is_uppercase)|
-| Alpha | - | Match any letters in most supported alphabets (is_alphabetic)|
-| Spaces | - | Match spaces c.is_whitespace(),|
-| Punctuation | - | c.is_ascii_punctuation(),|
-| Char | (char) | match a single character|
-| Chars | (&[char]) | Match an array of characters|
-| Range | (Range<char>) | Match an Range e.g. 'a'..'d' will include a, b and c, but not d. This follows the Unicode sequence.|
-| Between | (c1, c2) | Match characters betweeen the specified characters e.g. Between('a', 'd') will include d.|
+| Digit | (u8) | Match digit with the specified radix (e.g. 16 for hexadecimal) |
+| Numeric | - | Match number-like $ in the decimal base. Unlike the is_numeric() extension method this excludes . and -. Use to_numbers_conditional() to extract valid decimal number as strings |
+| AlphaNum | - | Match any alphanumeric characters (is_alphanumeric) |
+| Lower | - | Match lower case letters (is_lowercase) |
+| Upper | - | Match upper case letters (is_uppercase) |
+| Alpha | - | Match any letters in most supported alphabets (is_alphabetic) |
+| Spaces | - | Match spaces c.is_whitespace() |
+| Punctuation | - | c.is_ascii_punctuation() |
+| Char | (char) | match a single character |
+| Chars | (&[char]) | Match an array of characters |
+| Range | (Range<char>) | Match an Range e.g. 'a'..'d' will include a, b and c, but not d. This follows the Unicode sequence. |
+| Between | (char, char) | Match characters betweeen the specified characters e.g. Between('a', 'd') will include d. |
 
 ### Structs
 
