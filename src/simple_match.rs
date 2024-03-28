@@ -62,6 +62,7 @@ pub trait MatchOccurrences {
   /// Builds on match_indices in the Rust standard library
   fn find_matched_indices(&self, pat: &str) -> Vec<usize>;
 
+  /// Match occurrences of a single character
   fn find_char_indices(&self, pat: char) -> Vec<usize>;
 }
 
