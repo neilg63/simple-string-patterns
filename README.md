@@ -300,6 +300,7 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 - **StringBounds**: Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::Contains("report", true, CaseMatchMode::Insensitive) or StringBounds::EndsWith(".docx", CaseMatchMode::Insensitive). The *bounds_builder* method helps build these rule sets.
   
   Options:
+
 | Name | Arguments | Meaning |
 | ---- | --------- | ------- |
 | StartsWith | (&str, bool, CaseMatchMode) | *starts with* + boolean positivity and CaseMatchMode flags|
@@ -307,9 +308,11 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 | Contains | (&str, bool, CaseMatchMode) | case-insensitive *contains* + is_positive flag|
 | Whole | (&str, bool, CaseMatchMode) | case-insensitive whole string match + is_positive flag|
 - **CharType**: Defines categories, sets or ranges of characters as well as single characters.|
+
+
 | Name | Arguments | Meaning |
 | ---- | --------- | ------- |
-| Any | - | will match any characters|
+| Any | - | will match any characters |
 | DecDigit | - | Match 0-9 only (is_ascii_digit)|
 | Digit | (u8) | Match digit with the specified radix (e.g. 16 for hexadecimal)|
 | Numeric | - | Match number-like $ in the decimal base. Unlike the is_numeric() extension method this excludes . and -. Use to_numbers_conditional() to extract valid decimal number as strings;|
