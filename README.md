@@ -300,25 +300,29 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 - **StringBounds**: Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::Contains("report", true, CaseMatchMode::Insensitive) or StringBounds::EndsWith(".docx", CaseMatchMode::Insensitive). The *bounds_builder* method helps build these rule sets.
   
   Options:
-  - StartsWith(&str, bool, CaseMatchMode) *starts with* + boolean positivity and CaseMatchMode flags
-  - EndsWith(&str, bool, CaseMatchMode) case-insensitive *ends with* + is_positive flag
-  - Contains(&str, bool, CaseMatchMode) case-insensitive *contains* + is_positive flag
-  - Whole(&str, bool, CaseMatchMode) case-insensitive whole string match + is_positive flag
-- **CharType**: Defines categories, sets or ranges of characters as well as single characters.
-  - Any: will match any characters
-  - DecDigit => Match 0-9 only (is_ascii_digit)
-  - Digit(radix) => Match digit with the specified radix (e.g. 16 for hexadecimal)
-  - Numeric => Match number-like characters in the decimal base. Unlike the is_numeric() extension method this excludes . and -. Use to_numbers_conditional() to extract valid decimal number as strings;
-  - AlphaNum => Match any alphanumeric characters (is_alphanumeric)
-  - Lower => Match lower case letters (is_lowercase),
-  - Upper => Match upper case letters (is_uppercase)
-  - Alpha => Match any letters in most supported alphabets (is_alphabetic)
-  - Spaces => Match spaces c.is_whitespace(),
-  - Punctuation => c.is_ascii_punctuation(),
-  - Char(char) => match a single character
-  - Chars(&[char]) => Match an array of characters
-  - Range(Range<char>) => Match an Range e.g. 'a'..'d' will include a, b and c, but not d. This follows the Unicode sequence.
-  - Between(c1, c2) => Match characters betweeen the specified characters e.g. Between('a', 'd') will include d.
+| Name | Arguments | Meaning |
+| ---- | --------- | ------- |
+| StartsWith | (&str, bool, CaseMatchMode) | *starts with* + boolean positivity and CaseMatchMode flags|
+| EndsWith | (&str, bool, CaseMatchMode) | case-insensitive *ends with* + is_positive flag|
+| Contains | (&str, bool, CaseMatchMode) | case-insensitive *contains* + is_positive flag|
+| Whole | (&str, bool, CaseMatchMode) | case-insensitive whole string match + is_positive flag|
+- **CharType**: Defines categories, sets or ranges of characters as well as single characters.|
+| Name | Arguments | Meaning |
+| ---- | --------- | ------- |
+| Any | - | will match any characters|
+| DecDigit | - | Match 0-9 only (is_ascii_digit)|
+| Digit | (u8) | Match digit with the specified radix (e.g. 16 for hexadecimal)|
+| Numeric | - | Match number-like $ in the decimal base. Unlike the is_numeric() extension method this excludes . and -. Use to_numbers_conditional() to extract valid decimal number as strings;|
+| AlphaNum | - | Match any alphanumeric characters (is_alphanumeric)|
+| Lower | - | Match lower case letters (is_lowercase),|
+| Upper | - | Match upper case letters (is_uppercase)|
+| Alpha | - | Match any letters in most supported alphabets (is_alphabetic)|
+| Spaces | - | Match spaces c.is_whitespace(),|
+| Punctuation | - | c.is_ascii_punctuation(),|
+| Char | (char) | match a single character|
+| Chars | (&[char]) | Match an array of characters|
+| Range | (Range<char>) | Match an Range e.g. 'a'..'d' will include a, b and c, but not d. This follows the Unicode sequence.|
+| Between | (c1, c2) | Match characters betweeen the specified characters e.g. Between('a', 'd') will include d.|
 
 ### Structs
 
