@@ -27,7 +27,7 @@ The main advantages of *simple-string-patterns* lie in readability and miniminal
 | mid | filter_all | Filter arrays or vectors that match all of the rules (and logic) |
 | mid | filter_any | filter arrays or vectors that match any of the rules (or logic) |
 | start | to_parts | To a vector of string parts split by a separtor |
-| start | to_segment | To a vector of non-empty string parts split by a separtor |
+| start | to_segments | To a vector of non-empty string parts split by a separtor |
 | mid, end | _part(s) | Including leading or trailing separators and may return empty elements in vectors |
 | mid, end | _segment(s)* | Exclusing leading, trailing, repeated consecutive separators and thus exclude empty elements |
 | mid | _head, _tail | With split methods, head means the segment before the first split and tail the remainder | 
