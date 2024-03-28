@@ -277,7 +277,7 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 ```
 
 ### Traits
-| Name | Purpose of methods |
+| Name | Method description |
 | ---- | ------- |
 | MatchOccurrences** | Return the indices of all ocurrences of an exact string (find_matched_indices) or single character (find_char_indices) |
 | CharGroupMatch | Validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic |
