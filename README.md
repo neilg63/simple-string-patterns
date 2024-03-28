@@ -332,8 +332,8 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 | is_not_ + suffix | Does not match a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
 | starts_with | Starts with | pattern: &str, is_positive: bool, case_insensitive: bool | - |
 | contains + suffix | Contains | pattern: &str, is_positive: bool, case_insensitive: bool | - |
-| ends_with | Ends with | pattern: &str | pattern: &str, is_positive: bool, case_insensitive: bool | - |
-| whole | Matches a whole pattern | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| ends_with | Ends with | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| whole | Matches a whole pattern | pattern: &str , is_positive: bool, case_insensitive: bool | - |
 | or | Matches any of the specified rules | rules: &[BoundsBuilder] | - |
 | or_ + rule_suffix | Matches any of the patterns with the implicit rule | patterns: &[&str] | - |
 | and | Matches all the specified rules | rules: &[BoundsBuilder] | - |
