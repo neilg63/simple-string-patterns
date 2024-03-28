@@ -321,7 +321,7 @@ This struct helps you build string pattern rules for use with the *matched_by_ru
 The *bounds_builder()* function returns a base instance on which you may chain any number of rules and sub-rules.
 
 | Rule type | meaning | arguments | variant suffixes |
-| --------- | ------- ----------- | ---------------- |
+| --------- | ------- | --------- | ---------------- |
 | starting_with_ + suffix | Starts with | pattern: &str | _ci, _cs, _ci_alphanum |
 | containing_ + suffix | Contains | pattern: &str | _ci, _cs, _ci_alphanum |
 | ending_with_ + suffix | Ends with | pattern: &str | _ci, _cs, _ci_alphanum |
