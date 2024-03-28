@@ -16,7 +16,7 @@ The main advantages of *simple-string-patterns* lie in readability and miniminal
 ### Method overview
 | Position | Component | Meaning |
 | --------- | -------- | ------- |
-| end | - | Match, replace and split methods without _ci have an extra a boolean *case_insensitive* parameter  |
+| end | - | Many methods without *_ci* or *_cs* suffixes have an extra a boolean *case_insensitive* parameter  |
 | end | _ci | case-insensitive (cast to lower case for comparison) |
 | end | _cs | case-sensitive |
 | end | _ci_alphanum | case-insensitive match on only alphanumeric letters in the sample string |
