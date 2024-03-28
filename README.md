@@ -22,6 +22,8 @@ The main advantages of *simple-string-patterns* lie in readability and miniminal
 | end | _ci_alphanum | case-insensitive match on only alphanumeric letters in the sample string |
 | end | _rules | Accepts a BoundsBuilder object created via bounds_builder() |
 | end | _conditional | Accepts an array of StringBounds rules |
+| start | strip_by_ | Return a string without the specified character type(s) |
+| start | filter_by_ | Return a string with only specified character type(s) |
 | mid | filter_all | Filter arrays or vectors that match all of the rules (and logic) |
 | mid | filter_any | filter arrays or vectors that match any of the rules (or logic) |
 | start | to_parts | To a vector of string parts split by a separtor |
