@@ -85,10 +85,6 @@ pub trait SimpleMatchesMany where Self:SimpleMatch {
   /// test for multiple conditions. All other trait methods are derived from this
   fn matched_conditional(&self, pattern_sets: &[StringBounds]) -> Vec<bool>;
 
-  fn matched_by_rules(&self, rules: &BoundsBuilder) -> Vec<bool> {
-    self.matched_conditional(&rules.as_vec())
-  }
-
   /// test for multiple conditions with simple tuple pairs of pattern + case-insenitive flag
   fn contains_conditional(&self, pattern_sets: &[(&str, bool)]) -> Vec<bool> {
     let pattern_sets: Vec<StringBounds> = pairs_to_string_bounds(pattern_sets, BoundsPosition::Contains);
