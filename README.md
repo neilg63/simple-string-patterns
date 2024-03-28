@@ -335,9 +335,9 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 | ends_with | 🚫 | Ends with | pattern: &str, is_positive: bool, case_insensitive: bool | - |
 | whole | 🚫 | Matches a whole pattern | pattern: &str , is_positive: bool, case_insensitive: bool | - |
 | or | 🚫 | Matches any of the specified rules | rules: &[BoundsBuilder] | - |
-| or_ | ✓ | Matches any of the patterns with the implicit rule | patterns: &[&str] | - |
+| or_ | ✓ | Matches any of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series |
 | and | 🚫 | Matches all the specified rules | rules: &[BoundsBuilder] | - |
-| and_ | ✓ | Matches all of the patterns with the implicit rule | patterns: &[&str] | all in the starting), containing_, ending_ and is_ series |
+| and_ | ✓ | Matches all of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series |
 
 ### Dev Notes
 
