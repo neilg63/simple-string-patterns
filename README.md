@@ -277,18 +277,20 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 ```
 
 ### Traits
-  **MatchOccurrences**: Has methods to return the indices of all ocurrences of an exact string (find_matched_indices) or single character (find_char_indices);
-- **CharGroupMatch**:	Has methods to validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic
-- **IsNumeric**	Provides a method to check if the string may be parsed to an integer or float
-- **StripCharacters**:	Set of methods to strip unwanted characters by type or extract vectors of numeric strings, integers or floats without regular expressions
-- **SimpleMatch**:	Regex-free *match* methods for common validation rules, e.g. starts_with_ci_alphanum checks if the first letters or numerals in a sample string in case-insensitive mode without regular expressions.
-- **SimpleMatchesMany**:	Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results. matched_conditional
-- **SimpleMatchAll**:	Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a boolean if all are matched
-- **SimpleFilterAll**: Applies simple Regex-free multiple *match* methods to an array or vector of strings and returns a filtered vector of string slices
-- **SimpleEnclose**: Wraps strings in pairs of matching characters with variants for different escape character rules
-- **ToStrings**:	Converts arrays or vectors of strs to a vector of owned strings
-- **ToSegments**: Splits strings into parts, segments or head and tail pairs on a separator
-- **ToSegmentFromChars**: Splits strings into parts on any of any array of characters
+| Name | Purpose of methods |
+| ---- | ------- |
+| MatchOccurrences** | Return the indices of all ocurrences of an exact string (find_matched_indices) or single character (find_char_indices) |
+| CharGroupMatch | Validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic |
+| IsNumeric | Check if the string may be parsed to an integer or float |
+| StripCharacters | Strip unwanted characters by type or extract vectors of numeric strings, integers or floats without regular expressions |
+| SimpleMatch | Match strings without regular expression with common validation rules, e.g. starts_with_ci_alphanum checks if the first letters or numerals in a sample string in case-insensitive mode without regular expressions. |
+| SimpleMatchesMany | Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results. matched_conditional |
+| SimpleMatchAll | Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a boolean if all are matched |
+| SimpleFilterAll | Applies simple regex-free multiple *match* methods to an array or vector of strings and returns a filtered vector of string slices |
+| SimpleEnclose | Wraps strings in pairs of matching characters with variants for different escape character rules |
+| ToStrings | Converts arrays or vectors of strs to a vector of owned strings |
+| ToSegments | Splits strings into parts, segments or head and tail pairs on a separator |
+| ToSegmentFromChars | Splits strings into parts on any of any array of characters |
 
 ### Enums
 
@@ -296,7 +298,7 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 Defines case-sensitivity and alphanumeric-only modes.
 
 | Name | suffix equivalent | Meaning |
-| ---- | ---------------------  | ------- |
+| ---- | ----------------  | ------- |
 | Sensitive | _cs | Case sensitive |
 | Insensitive | _ci | Case-insensitive, casts both the needle and haystack all strings to lower case for comparison |
 | AlphanumInsensitive | _ci_alphanum | Removes all non-alphanumeric characters from the sample string and cast both the needle and haystack to lower case for comparison |
