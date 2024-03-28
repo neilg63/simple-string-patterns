@@ -14,20 +14,24 @@ Version 0.3.0 sees a radical revision of the enums used to define string matchin
 The main advantages of *simple-string-patterns* lie in readability and miniminal overhead in lightweight applications that would not otherwise need regex support. Under the hood, regular expression engines compile regex syntax and convert them into more efficient string matching subroutines. Preliminary benchmarks show that rule sets with basic matching methods such as *contains_ci* perform better than their regex counterparts, but if you need to add multiple nested rules, a *regex* may be faster. The sibling regex-powered *string-patterns* crate makes this very easy. This crate is best suited to small utilities that need to process large quantities of strings with a range of highly predictable formats, e.g. in cryptography, logging.
 
 ### Method overview
-- Many methods without *_ci* or *_cs* suffixes require a boolean *case_insensitive* parameter
-- Methods ending in *_cs* are case-sensitive
-- Methods ending in *_ci* are case-insensitive
-- Methods ending in *_ci_alphanum* are case-insensitive and remove all non-alphanumeric letters from the sample string before camparison
-- Methods ending in *_rules* accept a *BoundsBuilder* object created via bounds_builder()
-- Methods ending in *_conditional* accept an array of *StringBounds* rules
-- Methods with *filter_all* filter arrays or vectors that match all of the rules (and logic)
-- Methods with *filter_any* filter arrays or vectors that match any of the rules (or logic)
-- Methods with *_split* return either a vector or tuple pair.
-- Methods with *_part(s)* always include leading or trailing separators and may return empty elements in vectors
-- Methods with *_segment(s)* ignore leading, trailing, repeated consecutive separators and thus exclude empty elements
-- In tuples returned from segment(s) and part(s) methods, head means the segment before the first split and tail the remainder, while start means the whole string before the last split and end only the last part of the last matched separator.
-- Enclose or wrap methods ending in *_escaped* have an optional escape character parameter
-- Enclose or wrap methods ending in *_safe* insert a backslash before the any non-final occurrences of the closing characters unless already present
+| Position | Component | Meaning |
+| --------- | -------- | ------- |
+| end | match, replace, split | Match, replace and split methods without _ci have an extra a boolean *case_insensitive* parameter  |
+| end | _ci | case-insensitive (caes to lower case for comparison) |
+| end | _cs | case-sensitive |
+| end | _ci_alphanum | case-insensitive match on only alphanumeric letters in the sample string |
+| end | _rules | Accepts a BoundsBuilder object created via bounds_builder() |
+| end | _conditional | Accepts an array of StringBounds rules |
+| mid | filter_all | Filter arrays or vectors that match all of the rules (and logic) |
+| mid | filter_any | filter arrays or vectors that match any of the rules (or logic) |
+| start | to_parts | To a vector of string parts split by a separtor |
+| start | to_segment | To a vector of non-empty string parts split by a separtor |
+| mid, end | _part(s) | Including leading or trailing separators and may return empty elements in vectors |
+| mid, end | _segment(s)* | Exclusing leading, trailing, repeated consecutive separators and thus exclude empty elements |
+| mid | _head, _tail | With split methods, head means the segment before the first split and tail the remainder | 
+| mid | start, end | start means the whole string before the last split and end only the last part of the last matched separator | 
+| end | _escaped | Add an optional escape character parameter with *enclose* or *wrap* methods | 
+| end | _safe | insert a backslash before the any non-final occurrences of the closing characters unless already present | 
 
 ##### Simple case-insensitive match
 ```rust
@@ -320,8 +324,8 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 This struct helps you build string pattern rules for use with the *matched_by_rules()*, *filter_all_rules()* and *filter_any_rules()* methods.
 The *bounds_builder()* function returns a base instance on which you may chain any number of rules and sub-rules.
 
-| Rule type | function suffix? | meaning | arguments | variant suffixes |
-| --------- | ------- | ------- | --------- | ---------------- |
+| Rule type | suffix | meaning | arguments | variant suffixes |
+| --------- | ------ | ------- | --------- | ---------------- |
 | starting_with_ | ✓ | Starts with | pattern: &str | _ci, _cs, _ci_alphanum |
 | containing_ | ✓ | Contains | pattern: &str | _ci, _cs, _ci_alphanum |
 | ending_with_ | ✓ | Ends with | pattern: &str | _ci, _cs, _ci_alphanum |
