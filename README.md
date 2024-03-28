@@ -299,14 +299,15 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
   - **AlphanumInsensitive**: Removes all non-alphanumeric characters from the sample string and cast both the needle and haystack to lower case for comparison
 - **StringBounds**: Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::Contains("report", true, CaseMatchMode::Insensitive) or StringBounds::EndsWith(".docx", CaseMatchMode::Insensitive). The *bounds_builder* method helps build these rule sets.
   
-  Options:
+All options have *pattern: &str*, *is_positive: bool* and *case match mode* flags.
 
 | Name | Arguments | Meaning |
 | ---- | --------- | ------- |
-| StartsWith | (&str, bool, CaseMatchMode) | *starts with* + boolean positivity and CaseMatchMode flags|
-| EndsWith | (&str, bool, CaseMatchMode) | case-insensitive *ends with* + is_positive flag|
-| Contains | (&str, bool, CaseMatchMode) | case-insensitive *contains* + is_positive flag|
-| Whole | (&str, bool, CaseMatchMode) | case-insensitive whole string match + is_positive flag|
+| StartsWith | (&str, bool, CaseMatchMode) | starts with |
+| EndsWith | (&str, bool, CaseMatchMode) | *ends with |
+| Contains | (&str, bool, CaseMatchMode) | contains |
+| Whole | (&str, bool, CaseMatchMode) | whole string match |
+
 - **CharType**: Defines categories, sets or ranges of characters as well as single characters.|
 
 
