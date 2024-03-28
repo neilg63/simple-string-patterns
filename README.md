@@ -293,11 +293,14 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 ### Enums
 
 #### CaseMatchMode
-Defines case-sensitivity mode
-  Options:
-  - **Sensitive**: Case sensitive
-  - **Insensitive**: Case-insensitive, casts both the needle and haystack all strings to lower case for comparison
-  - **AlphanumInsensitive**: Removes all non-alphanumeric characters from the sample string and cast both the needle and haystack to lower case for comparison
+Defines case-sensitivity and alphanumeric-only modes.
+
+| Name | Function suffix equivalent | Meaning |
+| ---- | ---------------------  | ------- |
+| Sensitive | _cs | Case sensitive |
+| Insensitive | _ci | Case-insensitive, casts both the needle and haystack all strings to lower case for comparison |
+| AlphanumInsensitive | _ci_alphanum | Removes all non-alphanumeric characters from the sample string and cast both the needle and haystack to lower case for comparison |
+
 #### StringBounds
 Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::Contains("report", true, CaseMatchMode::Insensitive) or StringBounds::EndsWith(".docx", CaseMatchMode::Insensitive). The *bounds_builder* method helps build these rule sets.
   
