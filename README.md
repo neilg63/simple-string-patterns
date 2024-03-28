@@ -321,19 +321,19 @@ This struct helps you build string pattern rules for use with the *matched_by_ru
 The *bounds_builder()* function returns a base instance on which you may chain any number of rules and sub-rules.
 
 | Rule type | meaning | arguments | variant suffixes |
-| ---------- | ------- | --------------- | --------------- |
-| starting_with_ + suffix | Starts with a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
-| containing_ + suffix | Contains a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
-| ending_with_ + suffix | Ends with a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| --------- | ------- ----------- | ---------------- |
+| starting_with_ + suffix | Starts with | pattern: &str | _ci, _cs, _ci_alphanum |
+| containing_ + suffix | Contains | pattern: &str | _ci, _cs, _ci_alphanum |
+| ending_with_ + suffix | Ends with | pattern: &str | _ci, _cs, _ci_alphanum |
 | is_ + suffix | Matches a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
-| not_starting_with_ + suffix | Does not start with a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
-| not_containing_ + suffix | Does not contain a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
-| not_ending_with_ + suffix | Does not end with a pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| not_starting_with_ + suffix | Does not start withx | pattern: &str | _ci, _cs, _ci_alphanum |
+| not_containing_ + suffix | Does not contain | pattern: &str | _ci, _cs, _ci_alphanum |
+| not_ending_with_ + suffix | Does not end with | pattern: &str | _ci, _cs, _ci_alphanum |
 | is_not_ + suffix | Does not match a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
-| starts_with | Starting with a pattern | pattern: &str, is_positive: bool, case_insensitive: bool | - |
-| contains + suffix | Starting with a pattern | pattern: &str, is_positive: bool, case_insensitive: bool | - |
-| ends_with | Starting with a pattern | pattern: &str | pattern: &str, is_positive: bool, case_insensitive: bool | - |
-| whole | Matches a whole pattern | pattern: &str | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| starts_with | Starts with | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| contains + suffix | Contains | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| ends_with | Ends with | pattern: &str | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| whole | Matches a whole pattern | pattern: &str, is_positive: bool, case_insensitive: bool | - |
 | or | Matches any of the specified rules | rules: &[BoundsBuilder] | - |
 | or_ + rule_suffix | Matches any of the patterns with the implicit rule | patterns: &[&str] | - |
 | and | Matches all the specified rules | rules: &[BoundsBuilder] | - |
