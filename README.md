@@ -295,7 +295,7 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 #### CaseMatchMode
 Defines case-sensitivity and alphanumeric-only modes.
 
-| Name | Function suffix equivalent | Meaning |
+| Name | suffix equivalent | Meaning |
 | ---- | ---------------------  | ------- |
 | Sensitive | _cs | Case sensitive |
 | Insensitive | _ci | Case-insensitive, casts both the needle and haystack all strings to lower case for comparison |

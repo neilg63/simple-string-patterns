@@ -10,31 +10,6 @@ pub enum StringBounds<'a> {
   Or(Vec<StringBounds<'a>>)
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum BoundsPosition {
-  Starts,
-  Ends,
-  Contains,
-  Whole
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CaseMatchMode {
-  Sensitive,
-  Insensitive,
-  AlphanumInsensitive,
-}
-
-impl CaseMatchMode {
-  pub fn insensitive(case_insensitive: bool) -> Self {
-    if case_insensitive { 
-      Self::Insensitive
-    } else {
-      Self::Sensitive
-    }
-  }
-}
-
 impl<'a> StringBounds<'a> {
 
   // Only used internally in utils
@@ -107,4 +82,33 @@ impl<'a> StringBounds<'a> {
     }
   }
 
+}
+
+
+/// Simple enum to define position only, unlinke StringBounds methods with patterns and matching options
+#[derive(Debug, Clone, Copy)]
+pub enum BoundsPosition {
+  Starts,
+  Ends,
+  Contains,
+  Whole
+}
+
+/// Core matching mode corresponding to function name suffixes (_cs, _ci and _ci_alphanum)
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CaseMatchMode {
+  Sensitive,
+  Insensitive,
+  AlphanumInsensitive,
+}
+
+impl CaseMatchMode {
+  /// Determines if case match mode requires the sample string and pattern to be lower-cased
+  pub fn insensitive(case_insensitive: bool) -> Self {
+    if case_insensitive { 
+      Self::Insensitive
+    } else {
+      Self::Sensitive
+    }
+  }
 }
