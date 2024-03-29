@@ -79,6 +79,7 @@ impl ToSegments for str {
     splitter.into_iter().map(|s| s.to_string()).filter(|s| s.len() > 0).collect::<Vec<String>>()
   }
 
+  /// Extract only the head as a string. If the separator is absent return the whole string
   fn to_head(&self, separator: &str) -> String {
     if let Some((head, _tail)) = self.split_once(separator) {
       head.to_string()

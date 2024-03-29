@@ -288,7 +288,7 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 | SimpleMatchAll | 4 | Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a boolean if all are matched |
 | SimpleMatchAany |  4 | Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results |
 | SimpleFilterAll | 2 | Applies simple regex-free multiple *match* methods to an array or vector of strings and returns a filtered vector of string slices |
-| ToSegments | 13 | Split strings into parts, segments or head and tail pairs on a separator |
+| ToSegments | 14 | Split strings into parts, segments or head and tail pairs on a separator |
 | ToSegmentFromChars | 3 | Split strings into parts on any of any array of characters |
 | SimpleEnclose | 10 | Wrap strings in pairs of matching characters with variants for different escape character rules |
 | ToStrings | 1 | Converts arrays or vectors of strs to a vector of owned strings |
