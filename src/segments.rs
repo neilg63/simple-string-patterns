@@ -1,4 +1,4 @@
-use crate::simple_match::*;
+use crate::{simple_match::*, utils::extract_string_element_by_index};
 
 /// Methods to split a longer strong on a separator and return a vector of strings,
 /// a tuple of two strings or single optional string segment
@@ -33,7 +33,19 @@ pub trait ToSegments {
 
   /// Extract a string-like segment identified by its index from the components of a string with a given separator
   /// e.g. String::from("10/11/2024") .to_segment(1) yields "11"
-  fn to_segment(&self, separator: &str, index: i32) -> Option<String>;
+  /// A negative index parameter will start from the end 
+  fn to_segment(&self, separator: &str, index: i32) -> Option<String> {
+    let parts = self.to_segments(separator);
+    extract_string_element_by_index(parts, index)
+  }
+
+  /// Extract a string-like segment identified by its index from the components of a string with a given separator
+  /// e.g. String::from("10/11/2024") .to_parts(1) yields "11"
+  /// A negative index parameter will start from the end 
+  fn to_part(&self, separator: &str, index: i32) -> Option<String> {
+    let parts = self.to_parts(separator);
+    extract_string_element_by_index(parts, index)
+  }
 
   /// Extract an inner segment via a set of separator + index tuples
   fn to_inner_segment(&self, groups: &[(&str, i32)]) -> Option<String>;
@@ -138,23 +150,6 @@ impl ToSegments for str {
     }
   }
 
-  /// Extract an indexed segment yielded by splitting a string. 
-  /// A negative index parameter will start from the end 
-  fn to_segment(&self, separator: &str, index: i32) -> Option<String> {
-    let parts = self.to_segments(separator);
-    let num_parts = parts.len();
-    let target_index = if index >= 0 { index as usize } else { (num_parts as i32 + index) as usize };
-    if target_index < num_parts {
-      if let Some(segment) = parts.get(target_index) {
-        Some(segment.to_owned())
-      } else {
-        None
-      }
-    } else {
-      None
-    }
-  }
-
   /// extract an inner segment via a set of tuples with separators and indices.
   /// e.g. [("/", 1), ("-", 2)] applied to "pictures/holiday-france-1983/originals" 
   /// would match "1983" as an optional string
@@ -175,7 +170,9 @@ impl ToSegments for str {
     }
   }
 
-  /// Extract a tuple of the head and remainder, like split_once but returns Strings
+  /// Extract a tuple of the head and remainder
+  /// like split_once but returninga tuple of strings
+  /// If the separator is absent or at the start, the first part will be empty
   fn to_head_tail(&self, separator: &str) -> (String, String) {
     if let Some((head, tail)) = self.split_once(separator) {
       (head.to_string(), tail.to_string())
@@ -184,15 +181,12 @@ impl ToSegments for str {
     }
   }
 
-  /// Extract a tuple of the tail and remainder, like split_once in reverse and returning strings
+  /// Extract a tuple of the start and the last part
+  /// like split_once in reverse and returning a tuple of strings
+  /// If the separator is absent or at the end, the second part will be empty
   fn to_start_end(&self, separator: &str) -> (String, String) {
-    let parts = self.to_parts(separator);
-    let num_parts = parts.len();
-    if num_parts > 1 {
-      let end_index = num_parts - 1;
-      let start = parts[0..end_index].join(separator);
-      let end = self.to_end(separator);
-      (start, end)
+    if let Some((start, end)) = self.rsplit_once(separator) {
+      (start.to_string(), end.to_string())
     } else {
       (self.to_owned(), "".to_string())
     }

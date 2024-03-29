@@ -28,3 +28,15 @@ pub(crate) fn strs_to_string_bounds<'a>(strs: &'a [&str], case_mode: CaseMatchMo
 pub(crate) fn pairs_to_string_bounds<'a>(pairs: &'a [(&str, bool)], mode: BoundsPosition) -> Vec<StringBounds<'a>> {
   pairs.into_iter().map(|(txt, ci)| StringBounds::new(mode, *txt, true, CaseMatchMode::insensitive(*ci))).collect()
 }
+
+/// Extract a string segment by its index where a negative value starts from the end
+/// and an unmatched element returns None
+pub(crate) fn extract_string_element_by_index(parts: Vec<String>, index: i32) -> Option<String> {
+  let num_parts = parts.len();
+  let target_index = if index >= 0 { index as usize } else { (num_parts as i32 + index) as usize };
+  if target_index < num_parts {
+    parts.get(target_index).map(|part| part.to_owned())
+  } else {
+    None
+  }
+}
