@@ -353,13 +353,13 @@ impl<'a> BoundsBuilder<'a> {
 
   pub fn and_true(&mut self, patterns: &'a [&str], case_mode: CaseMatchMode, position: BoundsPosition) -> Self {
     let bounds: Vec<StringBounds<'a>> = strs_to_string_bounds(patterns, case_mode, position);
-    self.string_bounds.push(StringBounds::Or(bounds));
+    self.string_bounds.push(StringBounds::And(bounds));
     self.to_owned()
   }
 
   pub fn and_false(&mut self, patterns: &'a [&str], case_mode: CaseMatchMode, position: BoundsPosition) -> Self {
     let bounds: Vec<StringBounds<'a>> = strs_to_negative_string_bounds(patterns, case_mode, position);
-    self.string_bounds.push(StringBounds::Or(bounds));
+    self.string_bounds.push(StringBounds::And(bounds));
     self.to_owned()
   }
 
@@ -374,7 +374,7 @@ impl<'a> BoundsBuilder<'a> {
   }
 
   pub fn and_starting_with_ci(&mut self, patterns: &'a [&str]) -> Self {
-    self.and_starts_with(patterns, CaseMatchMode::Insensitive);
+    self.and_not_starts_with(patterns, CaseMatchMode::Insensitive);
     self.to_owned()
   }
 
