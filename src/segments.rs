@@ -35,6 +35,7 @@ pub trait ToSegments {
   /// e.g. String::from("10/11/2024") .to_segment(1) yields "11"
   fn to_segment(&self, separator: &str, index: i32) -> Option<String>;
 
+  /// Extract an inner segment via a set of separator + index tuples
   fn to_inner_segment(&self, groups: &[(&str, i32)]) -> Option<String>;
 
   /// extract the remainder after the head
