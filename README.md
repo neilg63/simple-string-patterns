@@ -171,10 +171,11 @@ let nepal_source_files: Vec<&str> = file_names.filter_all_rules(&mixed_condition
 
 ##### Nested Rule Sets
 As of verson 0.3.0 you may add nested rule sets with *and* / *or* logic. The former case is true only if all conditions are met, while the latter is true if any of the conditions are met. The *BoundsBuilder* struct now has a set of methods starting with *and* or *or*. You may call *and(rules: BoundsBuilder)* or *or(rules: BoundsBuilder)* directly with a nested rule set if you have a mix of rule types. However, if all rules have the same bounds, other methods accepting a simple array of patterns are available, e.g.
-- or_starts_with_ci(patterns: &[&str])
-- or_starts_with_ci_alphanum(patterns: &[&str])
-- or_contains_ci(patterns: &[&str])
-- or_ends_with_ci(patterns: &[&str])
+- or_starting_with_ci(patterns: &[&str])
+- or_starting_with_ci_alphanum(patterns: &[&str])
+- or_containing_ci(patterns: &[&str])
+- or_ending_with_ci(patterns: &[&str])
+- and_not_ending_with_ci(patterns: &[&str])
 
 ```rust
 
