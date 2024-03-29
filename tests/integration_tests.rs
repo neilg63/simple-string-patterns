@@ -577,11 +577,20 @@ fn test_bounds_builder() {
   .starting_with_ci("cat")
   .or_ending_with_ci(&[".jpg", ".png"]);
 
-  let filtered_lines = sample_strs.filter_all_rules(&rules_2);
-  let expected_lines = vec![
+  let filtered_lines_2 = sample_strs.filter_all_rules(&rules_2);
+  let expected_lines_2 = vec![
     "cat-picture.jpg",
     "CAT-image.png",
   ];
-  assert_eq!(filtered_lines, expected_lines);
+  assert_eq!(filtered_lines_2, expected_lines_2);
+
+  let rules_3 = bounds_builder()
+  .and_not_starting_with_ci(&["cat","dog"]);
+
+  let filtered_lines_3 = sample_strs.filter_all_rules(&rules_3);
+  let expected_lines_3 = vec![
+    "rabbit-photo.png",
+  ];
+  assert_eq!(filtered_lines_3, expected_lines_3);
 
 }

@@ -378,7 +378,7 @@ impl<'a> BoundsBuilder<'a> {
     self.to_owned()
   }
 
-  pub fn and_not_starts_with_ci(&mut self, patterns: &'a [&str]) -> Self {
+  pub fn and_not_starting_with_ci(&mut self, patterns: &'a [&str]) -> Self {
     self.and_not_starts_with(patterns, CaseMatchMode::Insensitive);
     self.to_owned()
   }
@@ -388,7 +388,7 @@ impl<'a> BoundsBuilder<'a> {
     self.to_owned()
   }
 
-  pub fn and_not_starts_with_cs(&mut self, patterns: &'a [&str]) -> Self {
+  pub fn and_not_starting_with_cs(&mut self, patterns: &'a [&str]) -> Self {
     self.and_not_starts_with(patterns, CaseMatchMode::Sensitive);
     self.to_owned()
   }
@@ -398,7 +398,7 @@ impl<'a> BoundsBuilder<'a> {
     self.to_owned()
   }
 
-  pub fn and_not_starts_with_ci_alphanum(&mut self, patterns: &'a [&str]) -> Self {
+  pub fn and_not_starting_with_ci_alphanum(&mut self, patterns: &'a [&str]) -> Self {
     self.and_not_starts_with(patterns, CaseMatchMode::AlphanumInsensitive);
     self.to_owned()
   }
