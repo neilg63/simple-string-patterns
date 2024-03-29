@@ -82,8 +82,11 @@ fn test_segment_match() {
   let path_string = "/var/www/mysite.com/web/uploads";
   // ignore leading slash
   let domain = path_string.to_segment("/",2).unwrap_or("".to_string()); 
-  let expected_string = "mysite.com".to_string();
-  assert_eq!(domain, expected_string);
+  let expected_string_1 = "mysite.com".to_string();
+  assert_eq!(domain, expected_string_1);
+  let part = path_string.to_part("/",2).unwrap_or("".to_string()); 
+  let expected_string_2 = "www".to_string();
+  assert_eq!(part, expected_string_2);
 }
 
 #[test]
