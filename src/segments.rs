@@ -31,15 +31,16 @@ pub trait ToSegments {
   /// Extract only the last segment
   fn to_end(&self, separator: &str) -> String;
 
-  /// Extract a string-like segment identified by its index from the components of a string with a given separator
-  /// e.g. String::from("10/11/2024") .to_segment(1) yields "11"
-  /// A negative index parameter will start from the end 
+  /// Extract a non-empty segment identified by its index from the components of a string with a given separator
+  /// e.g. String::from("/User/maria/Documents") .to_segment(1) yields "maria"
+  /// with the leading slash separator ignored
+  /// A negative index parameter will start from the end ignoring trailing separators
   fn to_segment(&self, separator: &str, index: i32) -> Option<String> {
     let parts = self.to_segments(separator);
     extract_string_element_by_index(parts, index)
   }
 
-  /// Extract a string-like segment identified by its index from the components of a string with a given separator
+  /// Extract a part identified by its index from the components of a string with a given separator
   /// e.g. String::from("10/11/2024") .to_parts(1) yields "11"
   /// A negative index parameter will start from the end 
   fn to_part(&self, separator: &str, index: i32) -> Option<String> {
