@@ -189,7 +189,7 @@ let filenames = [
 /// Match files containing the letter sequences "cat" or "dog" and ending in ".jpg" or ".jpeg";
 let rules = bounds_builder()
   .or_contains_ci(&["cat", "dog"])
-  .or_ends_with(&[".jpg", ".jpeg"]);
+  .or_ends_with_ci(&[".jpg", ".jpeg"]);
 
 let matched_files = filenames.filter_all_rules(&rules);
 /// Should yield an array with "my_CaT_2020.jpg" and "daughters_Dog_2023.png"

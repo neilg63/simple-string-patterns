@@ -555,8 +555,8 @@ fn test_split_on_characters() {
 fn test_bounds_builder() {
   // Nonsense text with miscellaneous letters, numbers and punctuation
   let rules = bounds_builder()
-      .starts_with_ci("cat", true)
-      .ends_with_ci(".jpg", false);
+      .starting_with_ci("cat")
+      .not_ending_with_ci(".jpg");
   
   let sample_strs = [
     "cat-picture.jpg",
@@ -566,7 +566,18 @@ fn test_bounds_builder() {
     "cAt-pic.webp"
   ];
 
-  let filtered_lines = sample_strs.filter_all_conditional(&rules.as_vec());
+  let filtered_lines = sample_strs.filter_all_rules(&rules);
+  let expected_lines = vec![
+    "CAT-image.png",
+    "cAt-pic.webp"
+  ];
+  assert_eq!(filtered_lines, expected_lines);
+
+  let rules_2 = bounds_builder()
+  .starting_with_ci("cat")
+  .or_ending_with_ci(&[".jpg", ".png"]);
+
+  let filtered_lines = sample_strs.filter_all_rules(&rules_2);
   let expected_lines = vec![
     "CAT-image.png",
     "cAt-pic.webp"
