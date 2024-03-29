@@ -418,13 +418,28 @@ impl<'a> BoundsBuilder<'a> {
     self.to_owned()
   }
 
+  pub fn and_not_containing_ci(&mut self, patterns: &'a [&str]) -> Self {
+    self.and_not_contains(patterns, CaseMatchMode::Insensitive);
+    self.to_owned()
+  }
+
   pub fn and_containing_cs(&mut self, patterns: &'a [&str]) -> Self {
     self.and_contains(patterns, CaseMatchMode::Sensitive);
     self.to_owned()
   }
 
+  pub fn and_not_containing_cs(&mut self, patterns: &'a [&str]) -> Self {
+    self.and_not_contains(patterns, CaseMatchMode::Sensitive);
+    self.to_owned()
+  }
+
   pub fn and_containing_ci_alphanum(&mut self, patterns: &'a [&str]) -> Self {
     self.and_contains(patterns, CaseMatchMode::AlphanumInsensitive);
+    self.to_owned()
+  }
+
+  pub fn and_not_containing_ci_alphanum(&mut self, patterns: &'a [&str]) -> Self {
+    self.and_not_contains(patterns, CaseMatchMode::AlphanumInsensitive);
     self.to_owned()
   }
 
@@ -443,13 +458,28 @@ impl<'a> BoundsBuilder<'a> {
     self.to_owned()
   }
 
+  pub fn and_not_ending_with_ci(&mut self, patterns: &'a [&str]) -> Self {
+    self.and_not_ends_with(patterns, CaseMatchMode::Insensitive);
+    self.to_owned()
+  }
+
   pub fn and_ending_with_cs(&mut self, patterns: &'a [&str]) -> Self {
     self.and_ends_with(patterns, CaseMatchMode::Sensitive);
     self.to_owned()
   }
 
+  pub fn and_not_ending_with_cs(&mut self, patterns: &'a [&str]) -> Self {
+    self.and_not_ends_with(patterns, CaseMatchMode::Sensitive);
+    self.to_owned()
+  }
+
   pub fn and_ending_with_ci_alphanum(&mut self, patterns: &'a [&str]) -> Self {
     self.and_ends_with(patterns, CaseMatchMode::AlphanumInsensitive);
+    self.to_owned()
+  }
+
+  pub fn and_not_ending_with_ci_alphanum(&mut self, patterns: &'a [&str]) -> Self {
+    self.and_not_ends_with(patterns, CaseMatchMode::AlphanumInsensitive);
     self.to_owned()
   }
 
