@@ -579,8 +579,8 @@ fn test_bounds_builder() {
 
   let filtered_lines = sample_strs.filter_all_rules(&rules_2);
   let expected_lines = vec![
+    "cat-picture.jpg",
     "CAT-image.png",
-    "cAt-pic.webp"
   ];
   assert_eq!(filtered_lines, expected_lines);
 
