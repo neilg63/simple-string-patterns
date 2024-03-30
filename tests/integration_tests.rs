@@ -584,13 +584,33 @@ fn test_bounds_builder() {
   ];
   assert_eq!(filtered_lines_2, expected_lines_2);
 
+
+}
+
+#[test]
+fn test_and_or_inner_bounds_builder() {
+  // Nonsense text with miscellaneous letters, numbers and punctuation
+  let sample_strs = [
+    "cat-picture.jpg",
+    "Dog-picture.png",
+    "DOG_portrait-2018.webp",
+    "lion-image-2009.webp",
+    "CAT-image.png",
+    "rabbit-photo.png",
+    "cAt-pic.webp"
+  ];
+
   let rules_3 = bounds_builder()
-  .and_not_starting_with_ci(&["cat","dog"]);
+  .and_not_starting_with_ci(&["cat","lion"])
+  .or_ending_with_ci(&[".png",".webp"]);
 
   let filtered_lines_3 = sample_strs.filter_all_rules(&rules_3);
   let expected_lines_3 = vec![
+    "Dog-picture.png",
+    "DOG_portrait-2018.webp",
     "rabbit-photo.png",
   ];
   assert_eq!(filtered_lines_3, expected_lines_3);
+
 
 }

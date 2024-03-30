@@ -360,14 +360,14 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 | or | 🚫 | Matches any of the specified rules | rules: &[BoundsBuilder] | - |
 | or_ | ✓ | Matches any of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series |
 | and | 🚫 | Matches all the specified rules | rules: &[BoundsBuilder] | - |
-| and_ | ✓ | Matches all of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series |
+| and_ | ✓ | Matches all of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series as well as their _not_ equivalents |
 
 ### Dev Notes
 
 This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
 
-##### *Version 0.3.0* expands the range of rules available BoundsBuilder
-As this version introduces a radical revision to the StringBouunds enum with new enums for BoundsPosition and CaseMatchMode that affect an expanded range of rules available via *bounds_builder()* for use with matched_by_rules(), filter_all_rules() and filter_any_rules().
+##### *Version 0.3.0* expands the range of rules available
+This version introduces a radical revision to the StringBounds enum, now supplemented by *BoundsPosition* and *CaseMatchMode* enums, to handle the full range of rules available via *bounds_builder()*. These rule sets may be used with with the matched_by_rules(), filter_all_rules() and filter_any_rules().
 
 Full documentation for the 0.2.* series is available in the [Github repo](https://github.com/neilg63/simple-string-patterns) in the *v0-2* branch.
 
