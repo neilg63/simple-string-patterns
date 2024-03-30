@@ -230,6 +230,7 @@ impl<'a> StripCharacters<'a> for str {
       }
       prev_char = component;
     }
+    // Called when the last character is a decimal point or comma that should be ignored
     if num_string.len() > 0 {
       add_sanitized_numeric_string(&mut output, &num_string.correct_numeric_string(enforce_comma_separator));
     }
