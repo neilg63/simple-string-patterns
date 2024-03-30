@@ -366,8 +366,29 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 
 This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
 
+##### *Version 0.3.8* New *and_not_+ rules methods
+This version introduced a set of *and_not_*-prefixed rule methods to match strings do not match the specified array of patterns, e.g. if we have a list image file names that start with animal names and we want to match those beginning with case-insensitive "cat" or "dog", but excluding those ending in "".psd" or ".pdf".
+```rust
+  /// file names starting with cat or dog, but not ending in .pdf or .psd
+  let file_names = [
+    "CAT-pic-912.png", // OK
+    "dog-pic-234.psd",
+    "dOg-photo-876.png", // OK
+    "rabbit-pic-194.jpg",
+    "cat-pic-787.pdf",
+    "cats-image-873.webp", // OK
+    "cat-pic-090.jpg", // OK
+  ];
+
+  let rules = bounds_builder()
+    .or_starting_with_ci(&["cat", "dog"])
+    .and_not_ending_with_ci(&[".psd", ".pdf"]);
+  let matched_files = file_names.filter_all_rules(&rules);
+  /// This should yield ["CAT-pic-912.png", "dOg-photo-876.png", "cats-image-873.webp", "cat-pic-090.jpg"]
+```
+
 ##### *Version 0.3.0* expands the range of rules available
-This version introduces a radical revision to the StringBounds enum, now supplemented by *BoundsPosition* and *CaseMatchMode* enums, to handle the full range of rules available via *bounds_builder()*. These rule sets may be used with with the matched_by_rules(), filter_all_rules() and filter_any_rules().
+This version introduced a radical revision to the StringBounds enum with supplementary *BoundsPosition* and *CaseMatchMode* enums, to handle the full range of rules available via *bounds_builder()*. These rule sets may be used with with the matched_by_rules(), filter_all_rules() and filter_any_rules().
 
 Full documentation for the 0.2.* series is available in the [Github repo](https://github.com/neilg63/simple-string-patterns) in the *v0-2* branch.
 

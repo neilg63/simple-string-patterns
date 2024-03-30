@@ -288,7 +288,7 @@ fn test_strip_non_numeric() {
   
   let target_str = "Ispent999999on2motorbikesattheageof72".to_string();
   assert_eq!(source_str.strip_non_alphanum(), target_str);
-  // check if ythe above numbers parse successfully to numbers
+  // check if the above numbers parse successfully to numbers
   assert_eq!(source_str.to_numbers::<f64>(), vec![9999.99f64, 2f64, 72f64]);
 
   assert_eq!(source_str.to_first_number::<f32>().unwrap_or(0f32), 9999.99f32);
@@ -303,8 +303,11 @@ fn test_strip_non_numeric() {
 
   // Rounded amount in the European format. The absence of a secondary separator makes this
   // value ambigiuous
-  let input_text = "Il furgone pesa 1.500kg";
+  let input_text = "Il furgone pesa 1.500kg, ma costa solo 19.900€";
   assert_eq!(input_text.to_first_number_euro::<u32>().unwrap_or(0), 1500);
+
+  // Extract two European-style numbers as Vec<u32>
+  assert_eq!(input_text.to_numbers_euro::<u32>(), vec![1_500, 19_900]);
 }
 
 #[test]

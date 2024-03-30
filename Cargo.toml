@@ -1,6 +1,6 @@
 [package]
 name = "simple-string-patterns"
-version = "0.3.8"
+version = "0.3.9"
 edition = "2021"
 description = "Makes it easier to match, split and extract strings in Rust without regular expressions. The parallel string-patterns crate provides extensions to work with regular expressions via the Regex library"
 repository = "https://github.com/neilg63/simple-string-patterns"

@@ -196,6 +196,8 @@ impl<'a> StripCharacters<'a> for str {
     let mut seq_num = 0;
     let mut num_string = String::new();
     let mut output: Vec<String> = Vec::new();
+    let last_index = self.chars().count().checked_sub(1).unwrap_or(0);
+    let mut index: usize = 0;
     for component in self.chars() {
       let mut is_end = false;
       if component.is_digit(10) {
@@ -218,6 +220,11 @@ impl<'a> StripCharacters<'a> for str {
             is_end = true;
           }
         }
+        if index == last_index && !is_end {
+          is_end = true;
+          // ignore final decimal or thousand separators if this is last character
+          seq_num += 1;
+        }
       } else {
         is_end = true;
       }
@@ -229,10 +236,7 @@ impl<'a> StripCharacters<'a> for str {
         seq_num = 0;
       }
       prev_char = component;
-    }
-    // Called when the last character is a decimal point or comma that should be ignored
-    if num_string.len() > 0 {
-      add_sanitized_numeric_string(&mut output, &num_string.correct_numeric_string(enforce_comma_separator));
+      index += 1;
     }
     output
   }
