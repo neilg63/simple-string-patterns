@@ -236,6 +236,8 @@ impl<'a> StripCharacters<'a> for str {
     output
   }
 
+  /// Scan the sample string for numeric strings and parse them as the specified number type
+  /// Returns Vec<T> where T is a number type
   fn to_numbers_conditional<T: FromStr>(&self, enforce_comma_separator: bool) -> Vec<T> {
     self.to_numeric_strings_conditional(enforce_comma_separator).into_iter()
       .map(|s| s.parse::<T>())
