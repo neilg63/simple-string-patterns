@@ -239,8 +239,7 @@ impl<'a> StripCharacters<'a> for str {
   fn to_numbers_conditional<T: FromStr>(&self, enforce_comma_separator: bool) -> Vec<T> {
     self.to_numeric_strings_conditional(enforce_comma_separator).into_iter()
       .map(|s| s.parse::<T>())
-      .filter(|s| s.is_ok())
-      .map(|s| s.ok().unwrap())
+      .filter_map(|s| s.ok())
       .collect()
   }
 
