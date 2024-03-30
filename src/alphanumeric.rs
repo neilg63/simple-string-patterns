@@ -209,21 +209,22 @@ impl<'a> StripCharacters<'a> for str {
       } else if prev_char.is_digit(10) {
         match component {
           '.' | '․' | ',' => {
-            if component == ',' {
-              num_string.push(',');
+            // ignore final decimal or thousand separator if this is last character
+            if index == last_index {
+              is_end = true;
             } else {
-              num_string.push('.');
+              if component == ',' {
+                num_string.push(',');
+              } else {
+                num_string.push('.');
+              }
+              // reset the sequence number at the end of a digit sequence
+              seq_num = 0;
             }
-            seq_num = 0;
           },
           _ => {
             is_end = true;
           }
-        }
-        if index == last_index && !is_end {
-          is_end = true;
-          // ignore final decimal or thousand separators if this is last character
-          seq_num += 1;
         }
       } else {
         is_end = true;
@@ -231,8 +232,10 @@ impl<'a> StripCharacters<'a> for str {
       if is_end {
         if seq_num > 0 {
           add_sanitized_numeric_string(&mut output, &num_string.correct_numeric_string(enforce_comma_separator));
+          // reset the mutable string to start the next nunber afresh
           num_string = String::new();
         }
+        // reset the sequence number at the end of a captured number string
         seq_num = 0;
       }
       prev_char = component;
