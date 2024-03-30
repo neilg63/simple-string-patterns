@@ -367,7 +367,7 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
 
 ##### *Version 0.3.8* New *and_not_+ rules methods
-This version introduced a set of *and_not_*-prefixed rule methods to match strings do not match the specified array of patterns, e.g. if we have a list image file names that start with animal names and we want to match those beginning with case-insensitive "cat" or "dog", but excluding those ending in "".psd" or ".pdf".
+This version introduced a set of *and_not_*-prefixed rule methods to filter strings do not match the specified array of patterns, e.g. if we have a list image file names that start with animal names and we want to match those beginning with case-insensitive "cat" or "dog", but excluding those ending in "".psd" or ".pdf".
 ```rust
   /// file names starting with cat or dog, but not ending in .pdf or .psd
   let file_names = [
