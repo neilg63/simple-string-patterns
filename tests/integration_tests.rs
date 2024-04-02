@@ -1,4 +1,4 @@
-use simple_string_patterns::{enums::StringBounds, *};
+use simple_string_patterns::*;
 
 #[cfg(test)]
 
