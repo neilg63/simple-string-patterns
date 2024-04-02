@@ -255,16 +255,22 @@ impl<'a> BoundsBuilder<'a> {
     self.matches_whole(pattern, false, false)
   }
 
+  // Add a rule set defined via bounds_builder() with ann logic
+  // All must match to return true
   pub fn and(&mut self, rules: BoundsBuilder<'a>) -> Self {
     self.string_bounds.push(StringBounds::And(rules.as_vec()));
     self.to_owned()
   }
 
+  // Add a rule set defined via bounds_builder() with or logic
+  // Only one need match to return true
   pub fn or(&mut self, rules: BoundsBuilder<'a>) -> Self {
     self.string_bounds.push(StringBounds::Or(rules.as_vec()));
     self.to_owned()
   }
 
+  // any of an array of patterns with the same case match mode and position need match
+  // usually defined via wrapper with descriptive names and a single patterns parameter, e.g. or_starting_with_ci()
   pub fn or_true(&mut self, patterns: &'a [&str], case_mode: CaseMatchMode, position: BoundsPosition) -> Self {
     let bounds: Vec<StringBounds<'a>> = strs_to_string_bounds(patterns, case_mode, position);
     self.string_bounds.push(StringBounds::Or(bounds));
@@ -351,12 +357,16 @@ impl<'a> BoundsBuilder<'a> {
     self.to_owned()
   }
 
+  // all within an array of patterns with the same case match mode and position must match
+  // usually defined via wrapper with descriptive names and a single patterns parameter, e.g. and_starting_with_ci()
   pub fn and_true(&mut self, patterns: &'a [&str], case_mode: CaseMatchMode, position: BoundsPosition) -> Self {
     let bounds: Vec<StringBounds<'a>> = strs_to_string_bounds(patterns, case_mode, position);
     self.string_bounds.push(StringBounds::And(bounds));
     self.to_owned()
   }
 
+  // all within an array of patterns with the same case match mode and position must not match
+  // usually defined via wrapper with descriptive names and a single patterns parameter, e.g. and_not_starting_with_ci()
   pub fn and_false(&mut self, patterns: &'a [&str], case_mode: CaseMatchMode, position: BoundsPosition) -> Self {
     let bounds: Vec<StringBounds<'a>> = strs_to_negative_string_bounds(patterns, case_mode, position);
     self.string_bounds.push(StringBounds::And(bounds));
