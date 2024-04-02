@@ -44,6 +44,7 @@ pub trait SimpleEnclose {
     self.enclose_in_chars(opening, end, None, escape_char)
   }
 
+  /// wrap a string in the same opening and closing character
   fn wrap(& self, opening: char) -> String {
     let end = match opening {
       '(' => ')',
