@@ -20,8 +20,8 @@ The main advantages of *simple-string-patterns* lie in readability and miniminal
 | end | _ci | case-insensitive (cast to lower case for comparison) |
 | end | _cs | case-sensitive |
 | end | _ci_alphanum | case-insensitive match on only alphanumeric letters in the sample string |
-| end | _rules | Accepts a BoundsBuilder object created via bounds_builder() |
-| end | _conditional | Accepts an array of StringBounds rules |
+| end | _rules | Accepts a set of rules defined via bounds_builder(), see below for examples  |
+| end | _conditional | Accepts an array of StringBounds rules, mainly used internally |
 | start | strip_by_ | Return a string without the specified character type(s) |
 | start | filter_by_ | Return a string with only specified character type(s) |
 | mid | filter_all | Filter arrays or vectors that match all of the rules (and logic) |
@@ -29,9 +29,9 @@ The main advantages of *simple-string-patterns* lie in readability and miniminal
 | start | to_parts | To a vector of string parts split by a separtor |
 | start | to_segments | To a vector of non-empty string parts split by a separtor |
 | mid, end | _part(s) | Including leading or trailing separators and may return empty elements in vectors |
-| mid, end | _segment(s)* | Exclusing leading, trailing, repeated consecutive separators and thus exclude empty elements |
-| mid | _head, _tail | With split methods, head means the segment before the first split and tail the remainder | 
-| mid | start, end | start means the whole string before the last split and end only the last part of the last matched separator | 
+| mid, end | _segment(s)* | Excluding leading, trailing, repeated consecutive separators and thus exclude empty elements |
+| mid, end | _head, _tail | With split methods, head means the segment before the first split and tail the remainder | 
+| mid, end | _start, _end | start means the whole string before the last split and end only the last part of the last matched separator | 
 | end | _escaped | Add an optional escape character parameter with *enclose* or *wrap* methods | 
 | end | _safe | insert a backslash before the any non-final occurrences of the closing characters unless already present | 
 
