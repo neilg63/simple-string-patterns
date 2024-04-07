@@ -113,15 +113,24 @@ if let Some(price_gbp) = sample_str.to_first_number::<f64>() {
 ```rust
 // extract European-style numbers with commas as decimal separators and points as thousand separators
 let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
-  let numbers: Vec<f32> = sample_str.to_numbers_euro();
-  // If two valid numbers are matched assume the first is the weight
-  if numbers.len() > 1 {
-    let weight_grams = numbers[0];
-    let price_euros = numbers[1];
-    let price_per_kg = price_euros / (weight_grams / 1000f32);
-    // the price in kg should be 3.96
-    println!("Flour costs €{:.2} per kilo", price_per_kg);
-  }
+let numbers: Vec<f32> = sample_str.to_numbers_euro();
+// If two valid numbers are matched assume the first is the weight
+if numbers.len() > 1 {
+  let weight_grams = numbers[0];
+  let price_euros = numbers[1];
+  let price_per_kg = price_euros / (weight_grams / 1000f32);
+  // the price in kg should be 3.96
+  println!("Flour costs €{:.2} per kilo", price_per_kg);
+}
+```
+
+##### Split a string list of numbers into floats
+```rust
+// extract European-style numbers with commas as decimal separators and points as thousand separators
+let sample_str = "34.2929,-93.701";
+let numbers: Vec<f64> = sample_str.split_to_number::<f64>();
+// should yield vec![34.2929,-93.701];
+
 ```
 
 ##### Match by all or any pattern rules without regular expressions
@@ -308,14 +317,14 @@ Defines case-sensitivity and alphanumeric-only modes.
 #### StringBounds
 Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::Contains("report", true, CaseMatchMode::Insensitive) or StringBounds::EndsWith(".docx", CaseMatchMode::Insensitive). The *bounds_builder* method helps build these rule sets.
   
-All options have *pattern: &str*, *is_positive: bool* and *case match mode* flags.
+All options have *pattern: &str*, *is_positive: bool* and *case match mode* flags and acceot the same three arguments ```(&str, bool, CaseMatchMode)```.
 
-| Name | Arguments | Meaning |
+| Name | Meaning |
 | ---- | --------- | ------- |
-| StartsWith | (&str, bool, CaseMatchMode) | starts with |
-| EndsWith | (&str, bool, CaseMatchMode) | ends with |
-| Contains | (&str, bool, CaseMatchMode) | contains |
-| Whole | (&str, bool, CaseMatchMode) | whole string match |
+| StartsWith starts with |
+| EndsWith | ends with |
+| Contains contains |
+| Whole | whole string match |
 
 #### CharType
 Defines categories, sets or ranges of characters as well as single characters.
@@ -365,6 +374,8 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 ### Dev Notes
 
 This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
+
+*Version 0.3.11* introduces a ```.split_to_numbers::<T>()``` method to split a string list of numbers into a vector of the spocified number type. This is handy when parsing common input formats such as langitudes and longitudes represented as ```"42.282,-89.3938"```. This might fail via ```.to_numbers()``` when commas and points used a separators may be confused with decimal or thousand separators without other characters in between.
 
 ##### *Version 0.3.8* New *and_not_+ rules methods
 This version introduced a set of *and_not_*-prefixed rule methods to filter strings do not match the specified array of patterns, e.g. if we have a list image file names that start with animal names and we want to match those beginning with case-insensitive "cat" or "dog", but excluding those ending in "".psd" or ".pdf".

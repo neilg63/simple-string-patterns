@@ -51,7 +51,7 @@ impl IsNumeric for str {
 
 
 /// Set of methods to strip unwanted characters by type or extract vectors of numeric strings, integers or floats
-pub trait StripCharacters<'a> {
+pub trait StripCharacters<'a> where Self:ToSegments {
 
   /// Removes all characters that any are not letters or digits, such as punctuation or symbols
   /// Letters include those used in most non-Latin alphabets
@@ -99,6 +99,12 @@ pub trait StripCharacters<'a> {
   /// Extract numeric string using European-style decimal commas
   fn to_numbers_euro<T: FromStr>(&self) -> Vec<T> {
     self.to_numbers_conditional::<T>(true)
+  }
+  
+  /// Split a string on a seoarator and retunr a vector of all segments that may parsed as numbers
+  /// This may fail with to_numbers() as the separator may be decimal or thousand separator
+  fn split_to_numbers<T: FromStr + Copy>(&self, pattern: &str) -> Vec<T> {
+    self.to_parts(pattern).into_iter().filter_map(|part| part.to_first_number::<T>()).collect::<Vec<T>>()
   }
 
   /// Correct numbers to conform to use dots (periods, full-stops) only as decimal separators
@@ -198,14 +204,28 @@ impl<'a> StripCharacters<'a> for str {
     let mut output: Vec<String> = Vec::new();
     let last_index = self.chars().count().checked_sub(1).unwrap_or(0);
     let mut index: usize = 0;
+    let mut prev_is_separator = false;
     for component in self.chars() {
-      let mut is_end = false;
-      if component.is_digit(10) {
+      let mut is_end = index == last_index;
+      let is_digit = component.is_digit(10);
+      // if the previous char is a separator and the current is not digit
+      // check if there is a valid temporary numeric string to be added below
+      if prev_is_separator && !is_digit {
+        let num_str_len = num_string.len();
+        if num_str_len > 1 {
+          // strip the final separator-like character
+          num_string = (&num_string[0..num_str_len - 1]).to_string();
+          is_end = true;
+          seq_num  = num_string.len(); 
+        }
+      }
+      if is_digit {
         if prev_char == '-' {
           num_string.push(prev_char);  
         }
         num_string.push(component);
         seq_num += 1;
+        prev_is_separator = false;
       } else if prev_char.is_digit(10) {
         match component {
           '.' | '․' | ',' => {
@@ -221,6 +241,7 @@ impl<'a> StripCharacters<'a> for str {
               // reset the sequence number at the end of a digit sequence
               seq_num = 0;
             }
+            prev_is_separator = true;
           },
           _ => {
             is_end = true;
@@ -228,15 +249,16 @@ impl<'a> StripCharacters<'a> for str {
         }
       } else {
         is_end = true;
+        prev_is_separator = false;
       }
       if is_end {
         if seq_num > 0 {
           add_sanitized_numeric_string(&mut output, &num_string.correct_numeric_string(enforce_comma_separator));
           // reset the mutable string to start the next nunber afresh
           num_string = String::new();
+          // reset the sequence number at the end of a captured number string
+          seq_num = 0;
         }
-        // reset the sequence number at the end of a captured number string
-        seq_num = 0;
       }
       prev_char = component;
       index += 1;

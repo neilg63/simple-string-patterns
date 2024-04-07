@@ -311,6 +311,19 @@ fn test_strip_non_numeric() {
 }
 
 #[test]
+fn test_split_to_numbers() {
+  let source_str = "75.02029,-9.2928";
+  let numbers = source_str.split_to_numbers::<f64>(",");
+  let expected_vec = vec![75.02029,-9.2928];
+  // Extract two simple floats
+  assert_eq!(numbers, expected_vec);
+  // check the core to_numbers_condtional still works with mixed numbers
+  let source_str_2 = "bag 74.99, orange 9.29 bank balance -1.229,89";
+  let expected_vec_2 = vec![74.99,9.29, -1229.89];
+  assert_eq!(source_str_2.to_numbers::<f64>(), expected_vec_2);
+}
+
+#[test]
 fn test_correct_floats() {
   let source_str = "Ho pagato 15,00€ per l'ingresso.".to_string();
   // with numbers that can be corrected parsed and cast to floats
