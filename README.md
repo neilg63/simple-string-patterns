@@ -128,8 +128,8 @@ if numbers.len() > 1 {
 ```rust
 // extract European-style numbers with commas as decimal separators and points as thousand separators
 let sample_str = "34.2929,-93.701";
-let numbers: Vec<f64> = sample_str.split_to_number::<f64>();
-// should yield vec![34.2929,-93.701];
+let numbers = sample_str.split_to_numbers::<f64>();
+// should yield vec![34.2929,-93.701]; (Vec<f64>)
 
 ```
 
