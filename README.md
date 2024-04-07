@@ -321,9 +321,9 @@ All options have *pattern: &str*, *is_positive: bool* and *case match mode* flag
 
 | Name | Meaning |
 | ---- | --------- | ------- |
-| StartsWith starts with |
+| StartsWith | starts with |
 | EndsWith | ends with |
-| Contains contains |
+| Contains | contains |
 | Whole | whole string match |
 
 #### CharType
