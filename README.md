@@ -320,7 +320,7 @@ Defines simple match rules with the pattern and a positivty flag, e.g. StringBou
 All options have *pattern: &str*, *is_positive: bool* and *case match mode* flags and acceot the same three arguments ```(&str, bool, CaseMatchMode)```.
 
 | Name | Meaning |
-| ---- | --------- | ------- |
+| ---- | ------- |
 | StartsWith | starts with |
 | EndsWith | ends with |
 | Contains | contains |
