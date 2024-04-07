@@ -317,7 +317,7 @@ Defines case-sensitivity and alphanumeric-only modes.
 #### StringBounds
 Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::Contains("report", true, CaseMatchMode::Insensitive) or StringBounds::EndsWith(".docx", CaseMatchMode::Insensitive). The *bounds_builder* method helps build these rule sets.
   
-All options have *pattern: &str*, *is_positive: bool* and *case match mode* flags and acceot the same three arguments ```(&str, bool, CaseMatchMode)```.
+All options have *pattern: &str*, *is_positive: bool* and *case match mode* flags and acceot the same three arguments ```(&str, bool, CaseMatchMode)``` for the match pattern, positivity and case match mode.
 
 | Name | Meaning |
 | ---- | ------- |
