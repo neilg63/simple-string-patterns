@@ -352,24 +352,24 @@ Defines categories, sets or ranges of characters as well as single characters.
 This struct helps you build string pattern rules for use with the *matched_by_rules()*, *filter_all_rules()* and *filter_any_rules()* methods.
 The *bounds_builder()* function returns a base instance on which you may chain any number of rules and sub-rules.
 
-| Rule type<br />(with suffix) | meaning | arguments | variants |
+| Rule type<br /><sup>(with suffix)</sup> | meaning | arguments | variants |
 | ----------------------- | ------- | --------- | -------- |
-| starting_with_ (✓) | Starts with | pattern: &str | _ci, _cs, _ci_alphanum |
-| containing_ (✓) | Contains | pattern: &str | _ci, _cs, _ci_alphanum |
-| ending_with_ (✓) | Ends with | pattern: &str | _ci, _cs, _ci_alphanum |
-| is_ (✓) | Matches a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
-| not_starting_with_ (✓) | Does not start withx | pattern: &str | _ci, _cs, _ci_alphanum |
-| not_containing_ (✓) | Does not contain | pattern: &str | _ci, _cs, _ci_alphanum |
-| not_ending_with_ (✓) | Does not end with | pattern: &str | _ci, _cs, _ci_alphanum |
-| is_not_ (✓) | Does not match a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| starting_with_&nbsp;(✓) | Starts with | pattern: &str | _ci, _cs, _ci_alphanum |
+| containing_&nbsp;(✓) | Contains | pattern: &str | _ci, _cs, _ci_alphanum |
+| ending_with_&nbsp;(✓) | Ends with | pattern: &str | _ci, _cs, _ci_alphanum |
+| is_&nbsp;(✓) | Matches a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
+| not_starting_with_&nbsp;(✓) | Does not start withx | pattern: &str | _ci, _cs, _ci_alphanum |
+| not_containing_&nbsp;(✓) | Does not contain | pattern: &str | _ci, _cs, _ci_alphanum |
+| not_ending_with_&nbsp;(✓) | Does not end with | pattern: &str | _ci, _cs, _ci_alphanum |
+| is_not_&nbsp;(✓) | Does not match a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
 | starts_with (⤬) | Starts with | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | - |
 | contains (⤬) | Contains | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | - |
 | ends_with (⤬) | Ends with | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | - |
 | whole (⤬) | Matches a whole pattern | pattern: &str , is_positive: bool, case_insensitive: bool | - |
 | or (⤬) | Matches any of the specified rules | rules: &BoundsBuilder | - |
-| or_ (✓) | Matches any of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series |
+| or_&nbsp;(✓) | Matches any of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series |
 | and (⤬) | Matches all the specified rules | rules: &BoundsBuilder | - |
-| and_ (✓) | Matches all of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series as well as their _not_ equivalents |
+| and_&nbsp;(✓) | Matches all of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series as well as their _not_ equivalents |
 
 ### Dev Notes
 
