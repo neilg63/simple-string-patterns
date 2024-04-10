@@ -352,7 +352,7 @@ Defines categories, sets or ranges of characters as well as single characters.
 This struct helps you build string pattern rules for use with the *matched_by_rules()*, *filter_all_rules()* and *filter_any_rules()* methods.
 The *bounds_builder()* function returns a base instance on which you may chain any number of rules and sub-rules.
 
-| Rule type (with suffix) | meaning | arguments | variants |
+| Rule type<br />(with suffix) | meaning | arguments | variants |
 | ----------------------- | ------- | --------- | -------- |
 | starting_with_ (✓) | Starts with | pattern: &str | _ci, _cs, _ci_alphanum |
 | containing_ (✓) | Contains | pattern: &str | _ci, _cs, _ci_alphanum |
@@ -362,9 +362,9 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 | not_containing_ (✓) | Does not contain | pattern: &str | _ci, _cs, _ci_alphanum |
 | not_ending_with_ (✓) | Does not end with | pattern: &str | _ci, _cs, _ci_alphanum |
 | is_not_ (✓) | Does not match a whole pattern | pattern: &str | _ci, _cs, _ci_alphanum |
-| starts_with (⤬) | Starts with | pattern: &str, is_positive: bool, case_insensitive: bool | - |
-| contains (⤬) | Contains | pattern: &str, is_positive: bool, case_insensitive: bool | - |
-| ends_with (⤬) | Ends with | pattern: &str, is_positive: bool, case_insensitive: bool | - |
+| starts_with (⤬) | Starts with | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | - |
+| contains (⤬) | Contains | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | - |
+| ends_with (⤬) | Ends with | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | - |
 | whole (⤬) | Matches a whole pattern | pattern: &str , is_positive: bool, case_insensitive: bool | - |
 | or (⤬) | Matches any of the specified rules | rules: &BoundsBuilder | - |
 | or_ (✓) | Matches any of the patterns with the implicit rule | patterns: &[&str] | all in the starting_with_, containing_, ending_with_ and is_ series |
