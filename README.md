@@ -375,7 +375,7 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 
 This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
 
-*Version 0.3.11* introduces a ```.split_to_numbers::<T>()``` method to split a string list of numbers into a vector of the spocified number type. This is handy when parsing common input formats such as langitudes and longitudes represented as ```"42.282,-89.3938"```. This might fail via ```.to_numbers()``` when commas and points used a separators may be confused with decimal or thousand separators without other characters in between.
+*Version 0.3.11* introduces a ```.split_to_numbers::<T>()``` method to split a string list of numbers into a vector of the specified number type. This is handy when parsing common input formats such as latitudes and longitudes represented as ```"42.282,-89.3938"```. This might fail via ```.to_numbers()``` when commas and points used a separators may be confused with decimal or thousand separators without other characters in between.
 
 ##### *Version 0.3.8* New *and_not_+ rules methods
 This version introduced a set of *and_not_*-prefixed rule methods to filter strings do not match the specified array of patterns, e.g. if we have a list image file names that start with animal names and we want to match those beginning with case-insensitive "cat" or "dog", but excluding those ending in "".psd" or ".pdf".
