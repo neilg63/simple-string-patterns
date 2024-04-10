@@ -352,8 +352,8 @@ Defines categories, sets or ranges of characters as well as single characters.
 This struct helps you build string pattern rules for use with the *matched_by_rules()*, *filter_all_rules()* and *filter_any_rules()* methods.
 The *bounds_builder()* function returns a base instance on which you may chain any number of rules and sub-rules.
 
-| Rule type (with suffix) | suffix | meaning | arguments | variant suffixes |
-| --------- | ------- | --------- | ---------------- |
+| Rule type (with suffix) | meaning | arguments | variant suffixes |
+| ----------------------- | --------- | ---------------- |
 | starting_with_ (✓) | Starts with | pattern: &str | _ci, _cs, _ci_alphanum |
 | containing_ (✓) | Contains | pattern: &str | _ci, _cs, _ci_alphanum |
 | ending_with_ (✓) | Ends with | pattern: &str | _ci, _cs, _ci_alphanum |
