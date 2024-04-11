@@ -128,7 +128,7 @@ if numbers.len() > 1 {
 ```rust
 // extract European-style numbers with commas as decimal separators and points as thousand separators
 let sample_str = "34.2929,-93.701";
-let numbers = sample_str.split_to_numbers::<f64>();
+let numbers = sample_str.split_to_numbers::<f64>(",");
 // should yield vec![34.2929,-93.701]; (Vec<f64>)
 
 ```
@@ -292,7 +292,7 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 | MatchOccurrences | 2 | Return the indices of all ocurrences of an exact string (find_matched_indices) or single character (find_char_indices) |
 | CharGroupMatch | 6 |  Validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic |
 | IsNumeric | 1 |  Check if the string may be parsed to an integer or float |
-| StripCharacters | 5 | Strip unwanted characters by type or extract vectors of numeric strings, integers or floats without regular expressions |
+| StripCharacters | 17 | Strip unwanted characters by type or extract vectors of numeric strings, integers or floats without regular expressions |
 | SimpleMatch | 6 | Match strings without regular expression with common validation rules, e.g. starts_with_ci_alphanum checks if the first letters or numerals in a sample string in case-insensitive mode without regular expressions. |
 | SimpleMatchesMany |  6 | Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results |
 | SimpleMatchAll | 4 | Regex-free multiple *match* methods accepting an array of StringBounds items, tuples or patterns and returning a boolean if all are matched |
@@ -375,7 +375,7 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 
 This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
 
-*Version 0.3.11* introduces a ```.split_to_numbers::<T>()``` method to split a string list of numbers into a vector of the specified number type. This is handy when parsing common input formats such as latitudes and longitudes represented as ```"42.282,-89.3938"```. This might fail via ```.to_numbers()``` when commas or points used as separators may be confused with decimal or thousand separators without other characters in between.
+*Version 0.3.11* introduces a ```.split_to_numbers::<T>(pattern: &str)``` method to split a string list of numbers into a vector of the specified number type. This is handy when parsing common input formats such as latitudes and longitudes represented as ```"42.282,-89.3938"```. This might fail via ```.to_numbers()``` when commas or points used as separators may be confused with decimal or thousand separators without other characters in between.
 
 ##### *Version 0.3.8* New *and_not_+ rules methods
 This version introduced a set of *and_not_*-prefixed rule methods to filter strings do not match the specified array of patterns, e.g. if we have a list image file names that start with animal names and we want to match those beginning with case-insensitive "cat" or "dog", but excluding those ending in "".psd" or ".pdf".
