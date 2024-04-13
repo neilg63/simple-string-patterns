@@ -266,6 +266,7 @@ println!("{}", lower_case_letters_a_to_m_only);
 let sample_with_lower_case_chars_and_spaces = sample_str.filter_by_types(&[CharType::Lower, CharType::Spaces]);
 println!("{}", sample_with_lower_case_chars_and_spaces);
 // Should print "roducts  per unit  each  only ürich café cañon"
+```
 
 #### Strip spaces only
 ```rust
