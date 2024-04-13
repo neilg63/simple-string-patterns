@@ -382,6 +382,8 @@ The *bounds_builder()* function returns a base instance on which you may chain a
 
 This crate serves as a building block for other crates as well as to supplement a future version of *string-patterns*. Some updates reflect minor editorial changes.
 
+*Version 0.3.13* introduces the ```.strip_spaces()``` method as shorthand for ```.strip_by_type(CharType::Spaces)```.
+
 *Version 0.3.11* introduces a ```.split_to_numbers::<T>(pattern: &str)``` method to split a string list of numbers into a vector of the specified number type. This is handy when parsing common input formats such as latitudes and longitudes represented as ```"42.282,-89.3938"```. This might fail via ```.to_numbers()``` when commas or points used as separators may be confused with decimal or thousand separators without other characters in between.
 
 ##### *Version 0.3.8* New *and_not_+ rules methods
