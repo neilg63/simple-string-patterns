@@ -126,11 +126,11 @@ if numbers.len() > 1 {
 
 ##### Split a string list of numbers into floats
 ```rust
-// extract European-style numbers with commas as decimal separators and points as thousand separators
+// extract 64-bit floats from a comma-separated list
+// numbers within each segment are evaluated separately
 let sample_str = "34.2929,-93.701";
 let numbers = sample_str.split_to_numbers::<f64>(",");
 // should yield vec![34.2929,-93.701]; (Vec<f64>)
-
 ```
 
 ##### Match by all or any pattern rules without regular expressions
@@ -236,54 +236,61 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditi
 
 #### Enclose strings in common bounding characters
 ```rust
-  let sample_phrase = r#"LLM means "large language model""#;
-  
-  let phrase_in_round_brackets = sample_phrase.parenthesize();
-  // yields (LLM means "large language model")
-  // but will not escape any parentheses in the source string.
+let sample_phrase = r#"LLM means "large language model""#;
 
-  let phrase_in_left_right_quotes = sample_phrase.enclose('“', '”');
-  // yields “LLM means "large language model"”
-  // in custom left and right quotation marks, but will not escape double quotes.
+let phrase_in_round_brackets = sample_phrase.parenthesize();
+// yields (LLM means "large language model")
+// but will not escape any parentheses in the source string.
 
-  let phrase_in_double_quotes = sample_phrase.double_quotes_safe();
-  // yields “LLM means \"large language model\"" with backslash-escaped double quotes
+let phrase_in_left_right_quotes = sample_phrase.enclose('“', '”');
+// yields “LLM means "large language model"”
+// in custom left and right quotation marks, but will not escape double quotes.
+
+let phrase_in_double_quotes = sample_phrase.double_quotes_safe();
+// yields “LLM means \"large language model\"" with backslash-escaped double quotes
 ```
 
 #### Filter strings by character categories
 ```rust
-  let sample_str = "Products: $9.99 per unit, £19.50 each, €15 only. Zürich café cañon";
-  
-  let vowels_only = sample_str.filter_by_type(CharType::Chars(&['a','e','i','o', 'u', 'é', 'ü', 'y']));
-  println!("{}", vowels_only);
-  // should print "oueuieaoyüiaéao"
+let sample_str = "Products: $9.99 per unit, £19.50 each, €15 only. Zürich café cañon";
 
-  let lower_case_letters_a_to_m_only = sample_str.filter_by_type(CharType::Range('a'..'n'));
-  println!("{}", lower_case_letters_a_to_m_only);
-  // should print  "dceieachlichcafca"
+let vowels_only = sample_str.filter_by_type(CharType::Chars(&['a','e','i','o', 'u', 'é', 'ü', 'y']));
+println!("{}", vowels_only);
+// should print "oueuieaoyüiaéao"
 
-  /// You can filter strings by multiple character categories
-  let sample_with_lower_case_chars_and_spaces = sample_str.filter_by_types(&[CharType::Lower, CharType::Spaces]);
-  println!("{}", sample_with_lower_case_chars_and_spaces);
-  // Should print "roducts  per unit  each  only ürich café cañon"
+let lower_case_letters_a_to_m_only = sample_str.filter_by_type(CharType::Range('a'..'n'));
+println!("{}", lower_case_letters_a_to_m_only);
+// should print  "dceieachlichcafca"
 
+/// You can filter strings by multiple character categories
+let sample_with_lower_case_chars_and_spaces = sample_str.filter_by_types(&[CharType::Lower, CharType::Spaces]);
+println!("{}", sample_with_lower_case_chars_and_spaces);
+// Should print "roducts  per unit  each  only ürich café cañon"
+
+#### Strip spaces only
+```rust
+let sample_str = "19 May 2021 ";
+let sample_without_spaces = sample_str.strip_spaces();
+println!("{}", sample_without_spaces);
+  // should print "19May2021";
 ```
+
 #### Remove character categories from strings
 ```rust
-  let sample_without_punctuation = sample_str.strip_by_type(CharType::Punctuation);
-  println!("{}", sample_without_punctuation);
-  // should print "Products 999 per unit £1950 each €15 only Zürich café cañon";
-  
-  let sample_without_spaces_and_punct = sample_str.strip_by_types(&[CharType::Spaces, CharType::Punctuation]);
-  println!("{}", sample_without_spaces_and_punct);
-  // should print "Products999perunit£1950each€15onlyZürichcafécañon";
+let sample_without_punctuation = sample_str.strip_by_type(CharType::Punctuation);
+println!("{}", sample_without_punctuation);
+// should print "Products 999 per unit £1950 each €15 only Zürich café cañon";
+
+let sample_without_spaces_and_punct = sample_str.strip_by_types(&[CharType::Spaces, CharType::Punctuation]);
+println!("{}", sample_without_spaces_and_punct);
+// should print "Products999perunit£1950each€15onlyZürichcafécañon";
 ```
 
 #### Split a string on any of set of characters
 ```rust
-  let sample_str = "jazz-and-blues_music/section";
-  let parts = sample_str.split_on_any_char(&['-','_', '/']);
-  // should yield "jazz", "and", "blues", "music", "section" as a vector of strings
+let sample_str = "jazz-and-blues_music/section";
+let parts = sample_str.split_on_any_char(&['-','_', '/']);
+// should yield "jazz", "and", "blues", "music", "section" as a vector of strings
 ```
 
 ### Traits

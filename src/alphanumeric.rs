@@ -60,6 +60,11 @@ pub trait StripCharacters<'a> where Self:ToSegments {
   // Remove all characters except digits, including punctuation such as decmimal points
   fn strip_non_digits(&self) -> String;
 
+  // Remove all characters except digits, including punctuation such as decmimal points
+  fn strip_spaces(&self) -> String {
+    self.strip_by_type(CharType::Spaces)
+  }
+
   /// Remove characters in the specified character category/range
   fn strip_by_type(&self, ct: CharType<'a>) -> String;
 

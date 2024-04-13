@@ -541,6 +541,10 @@ fn test_filter_by_character_type() {
   let expected_letter_sequence = "aeff9900";
   assert_eq!(hexadecimal_digits_only, expected_letter_sequence);
 
+  let sample_str_with_spaces = "19 May 2021 ";
+  let expected_str_without_spaces = "19May2021";
+  assert_eq!(sample_str_with_spaces.strip_spaces(), expected_str_without_spaces);
+
 }
 
 #[test]
