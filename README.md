@@ -225,7 +225,6 @@ let file_names = &[
   
 let nepal_and_india_source_files: Vec<&str> = file_names.filter_any_rules(&mixed_or_conditions);
 // should yield two file names: ["edited-img-Nepal-Feb-2003.psd", "photo_Nepal_Jan-2005.jpg", "image-India-Mar-2003.jpg", "pic_nepal_Dec-2004.png"]
-println!("{:?}", nepal_and_india_source_files);
 
 // To combine and/or logic, you can filter all rules with a nested "or" clause.
 let mixed_conditions_jpeg_only = bounds_builder()
