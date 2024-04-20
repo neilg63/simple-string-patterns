@@ -26,8 +26,8 @@ The main advantages of *simple-string-patterns* lie in readability and miniminal
 | start | filter_by_ | Return a string with only specified character type(s) |
 | mid | filter_all | Filter arrays or vectors that match all of the rules (and logic) |
 | mid | filter_any | filter arrays or vectors that match any of the rules (or logic) |
-| start | to_parts | To a vector of string parts split by a separtor |
-| start | to_segments | To a vector of non-empty string parts split by a separtor |
+| start | to_parts | To a vector of string parts split by a separator |
+| start | to_segments | To a vector of non-empty string parts split by a separator |
 | mid, end | _part(s) | Including leading or trailing separators and may return empty elements in vectors |
 | mid, end | _segment(s)* | Excluding leading, trailing, repeated consecutive separators and thus exclude empty elements |
 | mid, end | _head, _tail | With split methods, head means the segment before the first split and tail the remainder | 
@@ -208,7 +208,6 @@ The above example reproduces the following example *regular expression* /(cat|do
 
 ##### Filter by any pattern rules without regular expressions
 ```rust
-/
 
 // The same array may also be expressed via the new bounds_builder() function with chainable rules:
 // Call .as_vec() at the end
