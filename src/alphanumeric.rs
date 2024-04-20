@@ -106,10 +106,10 @@ pub trait StripCharacters<'a> where Self:ToSegments {
     self.to_numbers_conditional::<T>(true)
   }
   
-  /// Split a string on a seoarator and retunr a vector of all segments that may parsed as numbers
+  /// Split a string on a separator and retunr a vector of all segments that may parsed as numbers
   /// This may fail with to_numbers() as the separator may be decimal or thousand separator
   fn split_to_numbers<T: FromStr + Copy>(&self, pattern: &str) -> Vec<T> {
-    self.to_parts(pattern).into_iter().filter_map(|part| part.to_first_number::<T>()).collect::<Vec<T>>()
+    self.to_segments(pattern).into_iter().filter_map(|part| part.to_first_number::<T>()).collect::<Vec<T>>()
   }
 
   /// Correct numbers to conform to use dots (periods, full-stops) only as decimal separators

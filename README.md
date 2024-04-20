@@ -14,26 +14,26 @@ Version 0.3.0 sees a radical revision of the enums used to define string matchin
 The main advantages of *simple-string-patterns* lie in readability and miniminal overhead in lightweight applications that would not otherwise need regex support. Under the hood, regular expression engines compile regex syntax and convert them into more efficient string matching subroutines. Preliminary benchmarks show that rule sets with basic matching methods such as *contains_ci* perform better than their regex counterparts, but if you need to add multiple nested rules, a *regex* may be faster. The sibling regex-powered *string-patterns* crate makes this very easy. This crate is best suited to small utilities that need to process large quantities of strings with a range of highly predictable formats, e.g. in cryptography, logging.
 
 ### Method overview
-| Position | Component | Meaning |
+| Component<br />><sup>position</sup>| Meaning |
 | --------- | -------- | ------- |
-| end | - | Many methods without *_ci* or *_cs* suffixes have an extra a boolean *case_insensitive* parameter  |
-| end | _ci | case-insensitive (cast to lower case for comparison) |
-| end | _cs | case-sensitive |
-| end | _ci_alphanum | case-insensitive match on only alphanumeric letters in the sample string |
-| end | _rules | Accepts a set of rules defined via bounds_builder(), see below for examples  |
-| end | _conditional | Accepts an array of StringBounds rules, mainly used internally |
-| start | strip_by_ | Return a string without the specified character type(s) |
-| start | filter_by_ | Return a string with only specified character type(s) |
-| mid | filter_all | Filter arrays or vectors that match all of the rules (and logic) |
-| mid | filter_any | filter arrays or vectors that match any of the rules (or logic) |
-| start | to_parts | To a vector of string parts split by a separator |
-| start | to_segments | To a vector of non-empty string parts split by a separator |
-| mid, end | _part(s) | Including leading or trailing separators and may return empty elements in vectors |
-| mid, end | _segment(s)* | Excluding leading, trailing, repeated consecutive separators and thus exclude empty elements |
-| mid, end | _head, _tail | With split methods, head means the segment before the first split and tail the remainder | 
-| mid, end | _start, _end | start means the whole string before the last split and end only the last part of the last matched separator | 
-| end | _escaped | Add an optional escape character parameter with *enclose* or *wrap* methods | 
-| end | _safe | insert a backslash before the any non-final occurrences of the closing characters unless already present | 
+| - <sup>⇥</sup>| Many methods without *_ci* or *_cs* suffixes have an extra a boolean *case_insensitive* parameter  |
+| _ci <sup>⇥</sup> | case-insensitive (cast to lower case for comparison) |
+| _cs <sup>⇥</sup> | case-sensitive |
+| _ci_alphanum <sup>⇥</sup> | case-insensitive match on only alphanumeric letters in the sample string |
+| _rules <sup>⇥</sup> | Accepts a set of rules defined via bounds_builder(), see below for examples  |
+| _conditional <sup>⇥</sup>| Accepts an array of StringBounds rules, mainly for internal use |
+| strip_by_ <sup>⇤</sup> | Return a string without the specified character type(s) |
+| filter_by_ <sup>⇤</sup> | Return a string with only specified character type(s) |
+| filter_all ↔︎ <sup>⇤</sup> | Filter arrays or vectors that match all of the rules (and logic) |
+| filter_any ↔︎ <sup>⇤</sup> | filter arrays or vectors that match any of the rules (or logic) |
+| to_parts <sup>⇤</sup>| To a vector of string parts split by a separator |
+| to_segments <sup>⇤</sup> | To a vector of non-empty string parts split by a separator |
+| _part(s) <sup>↔︎⇥</sup> | Including leading or trailing separators and may return empty elements in vectors |
+| _segment(s)* <sup>↔︎⇥</sup> | Excluding leading, trailing, repeated consecutive separators and thus exclude empty elements |
+| _head, _tail <sup>↔︎⇥</sup> | With split methods, head means the segment before the first split and tail the remainder | 
+| _start, _end <sup>↔︎⇥</sup> | start means the whole string before the last split and end only the last part of the last matched separator | 
+| end | _escaped <sup>⇥</sup> | Add an optional escape character parameter with *enclose* or *wrap* methods | 
+| end | _safe <sup>⇥</sup> | insert a backslash before the any non-final occurrences of the closing characters unless already present | 
 
 ##### Simple case-insensitive match
 ```rust
