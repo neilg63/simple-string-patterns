@@ -15,7 +15,7 @@ The main advantages of *simple-string-patterns* lie in readability and miniminal
 
 ### Method overview
 | Component<br />><sup>position</sup>| Meaning |
-| --------- | -------- | ------- |
+| ------------------- | ------- |
 | - <sup>⇥</sup>| Many methods without *_ci* or *_cs* suffixes have an extra a boolean *case_insensitive* parameter  |
 | _ci <sup>⇥</sup> | case-insensitive (cast to lower case for comparison) |
 | _cs <sup>⇥</sup> | case-sensitive |
@@ -32,8 +32,8 @@ The main advantages of *simple-string-patterns* lie in readability and miniminal
 | _segment(s)* <sup>↔︎⇥</sup> | Excluding leading, trailing, repeated consecutive separators and thus exclude empty elements |
 | _head, _tail <sup>↔︎⇥</sup> | With split methods, head means the segment before the first split and tail the remainder | 
 | _start, _end <sup>↔︎⇥</sup> | start means the whole string before the last split and end only the last part of the last matched separator | 
-| end | _escaped <sup>⇥</sup> | Add an optional escape character parameter with *enclose* or *wrap* methods | 
-| end | _safe <sup>⇥</sup> | insert a backslash before the any non-final occurrences of the closing characters unless already present | 
+| _escaped <sup>⇥</sup> | Add an optional escape character parameter with *enclose* or *wrap* methods | 
+| _safe <sup>⇥</sup> | insert a backslash before the any non-final occurrences of the closing characters unless already present | 
 
 ##### Simple case-insensitive match
 ```rust
