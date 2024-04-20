@@ -211,12 +211,11 @@ The above example reproduces the following example *regular expression* /(cat|do
 
 // The same array may also be expressed via the new bounds_builder() function with chainable rules:
 // Call .as_vec() at the end
-let mixed_conditions = bounds_builder()
+let mixed_or_conditions = bounds_builder()
   .containing_ci("nepal")
-  .containing_ci("india")
-  .as_vec();
+  .containing_ci("india");
 
-let file_names = [
+let file_names = &[
   "edited-img-Nepal-Feb-2003.psd",
   "image-Thailand-Mar-2003.jpg",
   "photo_Nepal_Jan-2005.jpg",
@@ -224,12 +223,15 @@ let file_names = [
   "pic_nepal_Dec-2004.png"
 ];
   
-let nepal_and_india_source_files: Vec<&str> = file_names.filter_any_conditional(&mixed_conditions);
+let nepal_and_india_source_files: Vec<&str> = file_names.filter_any_rules(&mixed_or_conditions);
 // should yield two file names: ["edited-img-Nepal-Feb-2003.psd", "photo_Nepal_Jan-2005.jpg", "image-India-Mar-2003.jpg", "pic_nepal_Dec-2004.png"]
+println!("{:?}", nepal_and_india_source_files);
 
-/// You can combine the above with an filter_all_conditional
-let extension_rules = bounds_builder().ending_with_ci(".jpg");
-let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_any_conditional(&mixed_conditions).filter_any_conditional(&extension_rules);
+// To combine and/or logic, you can filter all rules with a nested "or" clause.
+let mixed_conditions_jpeg_only = bounds_builder()
+  .ending_with_ci(".jpg")
+  .or(mixed_or_conditions);
+let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_all_rules(&mixed_conditions_jpeg_only);
 // should yield two file names: ["photo_Nepal_Jan-2005.jpg", "image-India-Mar-2003.jpg"]
 ```
 
