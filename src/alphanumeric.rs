@@ -22,6 +22,10 @@ impl IsNumeric for str {
   /// Use trim() or correct_numeric_string() first for looser number validation
   fn is_numeric(&self) -> bool {
     let num_chars = self.chars().count();
+    // return early with false if empty
+    if num_chars < 1 {
+      return false;
+    }
     let last_index = num_chars - 1;
     let mut num_valid: usize = 0;
     let mut index: usize = 0;

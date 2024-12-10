@@ -250,6 +250,14 @@ fn test_is_numeric() {
   assert!(!num_str_4.is_numeric());
 }
 
+
+#[test]
+fn test_is_numeric_empty() {
+  let empty_str = "";
+  // should be false as is empty. This may have caused a subtract from zero error
+  assert!(!empty_str.is_numeric());
+}
+
 #[test]
 fn test_has_digits() {
   // Does this have a valid decimal digit sequence that may be extracted as a valid number
