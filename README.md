@@ -5,9 +5,7 @@
 # Simple String Patterns
 
 This library makes it easier to match, split and extract strings in Rust. It builds on the Rust standard library. A parallel [string-patterns](https://crates.io/crates/string-patterns) crate provides extensions to work with _regular expressions_. Together, these crates aim to make working with strings as easy in Rust as it is Javascript or Python with cleaner syntax.
-
-Simpler string matching methods such as _starts_with, contains or ends_with_ will always perform better, especially when processing large data sets. Methods such as _starts_with_ci_ and _starts_with_ci_alphanum_ build on these core methods to facilitate string manipulation without _regular expressions_.
-
+Simpler string matching methods such as `starts_with`, `contains` or `ends_with` will always perform better, especially when processing large data sets. Methods such as `equals_ci`, `equals_ci_alphanum`, `starts_with_ci` and `starts_with_ci_alphanum` build on these core methods to facilitate string manipulation without _regular expressions_.
 Version 0.3.0 sees a radical revision of the enums used to define string matching rules in the _matched_by_rules()_, _matched_conditional()_, _filter_all_rules()_ and _filter_any_rules()_ methods.
 
 ## Simple Patterns versus Regular Expressions
@@ -49,11 +47,16 @@ if str_1.starts_with_ci("dog") {
 ##### Simple case-insensitive match on the alphanumeric characters only in a longer text
 
 ```rust
-// This method is handy for validating text values from external data sources with
+// Theses methods are handy for validating text values from external data sources with
 // inconsistent naming conventions, e.g. first-name, first_name, firstName or "first name"
 let str_1 = "Do you spell hip-hop with a hyphen?";
 if str_1.contains_ci_alphanum("hiphop") {
   println!("{} is hip-hop-related", str_1);
+}
+// Compare a single term with or without hyphens, spaces or other punctuation
+let sample_str = "Start-up";
+if str_1.equals_ci_alphanum("startup") {
+  println!("It's a start-up company");
 }
 ```
 
@@ -91,7 +94,6 @@ if let Some(domain) = path_string.to_segment("/", 2) {
 let test_string = "long-list-of-technical-words"
 let (head, tail) = test_string.to_head_tail("-");
 println!("Head: {}, tail: {}", head, tail); // Head: long, tail: list-of-technical-words
-
 let (start, end) = test_string.to_start_end("-");
 println!("Start: {}, end: {}", start, end); // Start: long-list-of-technical, end: words
 ```
@@ -110,7 +112,6 @@ let source_str = "long/path/with-a-long-title/details";
 
 ```rust
 const GBP_TO_EURO: f64 = 0.835;
-
 let sample_str = "Price £12.50 each";
 if let Some(price_gbp) = sample_str.to_first_number::<f64>() {
     let price_eur = price_gbp / GBP_TO_EURO;
@@ -151,19 +152,14 @@ let numbers = sample_str.split_to_numbers::<f64>(",");
 let mixed_conditions = bounds_builder()
   .containing_ci("nepal")
   .ending_with_ci(".jpg");
-
 let sample_name_1 = "picture-Nepal-1978.jpg";
 let sample_name_1 = "edited_picture-Nepal-1978.psd";
-
 // contains `nepal` and ends with .jpg
 sample_name_1.match_all_rules(&mixed_conditions); // true
-
 // contains `nepal` but does not end with .jpg
 sample_name_2.match_all_rules(&mixed_conditions); // false
-
 // contains `nepal` and/or .jpg
 sample_name_1.match_any_rules(&mixed_conditions); // true
-
 // contains `nepal` and/or .jpg
 sample_name_2.match_any_rules(&mixed_conditions); // true
 ```
@@ -171,13 +167,11 @@ sample_name_2.match_any_rules(&mixed_conditions); // true
 ##### Filter by all pattern rules without regular expressions
 
 ```rust
-
 // The same array may also be expressed via the new bounds_builder() function with chainable rules:
 // You may call .as_vec() to convert to a vector of StringBounds rules as used by methods ending in _conditional
 let mixed_conditions = bounds_builder()
   .containing_ci("nepal")
   .not_ending_with_ci(".psd");
-
 let file_names = [
   "edited-img-Nepal-Feb-2003.psd",
   "image-Thailand-Mar-2003.jpg",
@@ -202,7 +196,6 @@ As of verson 0.3.0 you may add nested rule sets with _and_ / _or_ logic. The for
 - and_not_ending_with_ci(patterns: &[&str])
 
 ```rust
-
 let filenames = [
   "my_rabbit_2019.webp",
   "my_CaT_2020.jpg",
@@ -210,12 +203,10 @@ let filenames = [
   "daughters_Dog_2023.jpeg",
   "big cat.psd"
 ];
-
 /// Match files containing the letter sequences "cat" or "dog" and ending in ".jpg" or ".jpeg";
 let rules = bounds_builder()
   .or_contains_ci(&["cat", "dog"])
   .or_ends_with_ci(&[".jpg", ".jpeg"]);
-
 let matched_files = filenames.filter_all_rules(&rules);
 /// Should yield an array with "my_CaT_2020.jpg" and "daughters_Dog_2023.png"
 ```
@@ -225,13 +216,11 @@ The above example reproduces the following example _regular expression_ /(cat|do
 ##### Filter by any pattern rules without regular expressions
 
 ```rust
-
 // The same array may also be expressed via the new bounds_builder() function with chainable rules:
 // Call .as_vec() at the end
 let mixed_or_conditions = bounds_builder()
   .containing_ci("nepal")
   .containing_ci("india");
-
 let file_names = &[
   "edited-img-Nepal-Feb-2003.psd",
   "image-Thailand-Mar-2003.jpg",
@@ -239,10 +228,8 @@ let file_names = &[
   "image-India-Mar-2003.jpg",
   "pic_nepal_Dec-2004.png"
 ];
-
 let nepal_and_india_source_files: Vec<&str> = file_names.filter_any_rules(&mixed_or_conditions);
 // should yield two file names: ["edited-img-Nepal-Feb-2003.psd", "photo_Nepal_Jan-2005.jpg", "image-India-Mar-2003.jpg", "pic_nepal_Dec-2004.png"]
-
 // To combine and/or logic, you can filter all rules with a nested "or" clause.
 let mixed_conditions_jpeg_only = bounds_builder()
   .ending_with_ci(".jpg")
@@ -255,15 +242,12 @@ let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_all_rules(&
 
 ```rust
 let sample_phrase = r#"LLM means "large language model""#;
-
 let phrase_in_round_brackets = sample_phrase.parenthesize();
 // yields (LLM means "large language model")
 // but will not escape any parentheses in the source string.
-
 let phrase_in_left_right_quotes = sample_phrase.enclose('“', '”');
 // yields “LLM means "large language model"”
 // in custom left and right quotation marks, but will not escape double quotes.
-
 let phrase_in_double_quotes = sample_phrase.double_quotes_safe();
 // yields “LLM means \"large language model\"" with backslash-escaped double quotes
 ```
@@ -272,15 +256,12 @@ let phrase_in_double_quotes = sample_phrase.double_quotes_safe();
 
 ```rust
 let sample_str = "Products: $9.99 per unit, £19.50 each, €15 only. Zürich café cañon";
-
 let vowels_only = sample_str.filter_by_type(CharType::Chars(&['a','e','i','o', 'u', 'é', 'ü', 'y']));
 println!("{}", vowels_only);
 // should print "oueuieaoyüiaéao"
-
 let lower_case_letters_a_to_m_only = sample_str.filter_by_type(CharType::Range('a'..'n'));
 println!("{}", lower_case_letters_a_to_m_only);
 // should print  "dceieachlichcafca"
-
 /// You can filter strings by multiple character categories
 let sample_with_lower_case_chars_and_spaces = sample_str.filter_by_types(&[CharType::Lower, CharType::Spaces]);
 println!("{}", sample_with_lower_case_chars_and_spaces);
@@ -302,7 +283,6 @@ println!("{}", sample_without_spaces);
 let sample_without_punctuation = sample_str.strip_by_type(CharType::Punctuation);
 println!("{}", sample_without_punctuation);
 // should print "Products 999 per unit £1950 each €15 only Zürich café cañon";
-
 let sample_without_spaces_and_punct = sample_str.strip_by_types(&[CharType::Spaces, CharType::Punctuation]);
 println!("{}", sample_without_spaces_and_punct);
 // should print "Products999perunit£1950each€15onlyZürichcafécañon";
@@ -339,46 +319,42 @@ let parts = sample_str.split_on_any_char(&['-','_', '/']);
 #### CaseMatchMode
 
 Defines case-sensitivity and alphanumeric-only modes.
-
-| Name                | suffix equivalent | Meaning                                                                                                                           |
+| Name | suffix equivalent | Meaning |
 | ------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Sensitive           | \_cs              | Case sensitive                                                                                                                    |
-| Insensitive         | \_ci              | Case-insensitive, casts both the needle and haystack all strings to lower case for comparison                                     |
-| AlphanumInsensitive | \_ci_alphanum     | Removes all non-alphanumeric characters from the sample string and cast both the needle and haystack to lower case for comparison |
+| Sensitive | \_cs | Case sensitive |
+| Insensitive | \_ci | Case-insensitive, casts both the needle and haystack all strings to lower case for comparison |
+| AlphanumInsensitive | \_ci_alphanum | Removes all non-alphanumeric characters from the sample string and cast both the needle and haystack to lower case for comparison |
 
 #### StringBounds
 
 Defines simple match rules with the pattern and a positivty flag, e.g. StringBounds::Contains("report", true, CaseMatchMode::Insensitive) or StringBounds::EndsWith(".docx", CaseMatchMode::Insensitive). The _bounds_builder_ method helps build these rule sets.
-
 All options have _pattern: &str_, _is_positive: bool_ and _case match mode_ flags and acceot the same three arguments `(&str, bool, CaseMatchMode)` for the match pattern, positivity and case match mode.
-
-| Name       | Meaning            |
+| Name | Meaning |
 | ---------- | ------------------ |
-| StartsWith | starts with        |
-| EndsWith   | ends with          |
-| Contains   | contains           |
-| Whole      | whole string match |
+| StartsWith | starts with |
+| EndsWith | ends with |
+| Contains | contains |
+| Whole | whole string match |
 
 #### CharType
 
 Defines categories, sets or ranges of characters as well as single characters.
-
-| Name        | Arguments     | Meaning                                                                                                                                                                          |
+| Name | Arguments | Meaning |
 | ----------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Any         | -             | will match any characters                                                                                                                                                        |
-| DecDigit    | -             | Match 0-9 only (is_ascii_digit)                                                                                                                                                  |
-| Digit       | (u8)          | Match digit with the specified radix (e.g. 16 for hexadecimal)                                                                                                                   |
-| Numeric     | -             | Match number-like $ in the decimal base. Unlike the is_numeric() extension method this excludes . and -. Use to_numbers_conditional() to extract valid decimal number as strings |
-| AlphaNum    | -             | Match any alphanumeric characters (is_alphanumeric)                                                                                                                              |
-| Lower       | -             | Match lower case letters (is_lowercase)                                                                                                                                          |
-| Upper       | -             | Match upper case letters (is_uppercase)                                                                                                                                          |
-| Alpha       | -             | Match any letters in most supported alphabets (is_alphabetic)                                                                                                                    |
-| Spaces      | -             | Match spaces c.is_whitespace()                                                                                                                                                   |
-| Punctuation | -             | c.is_ascii_punctuation()                                                                                                                                                         |
-| Char        | (char)        | match a single character                                                                                                                                                         |
-| Chars       | (&[char])     | Match an array of characters                                                                                                                                                     |
-| Range       | (Range<char>) | Match an Range e.g. 'a'..'d' will include a, b and c, but not d. This follows the Unicode sequence.                                                                              |
-| Between     | (char, char)  | Match characters betweeen the specified characters e.g. Between('a', 'd') will include d.                                                                                        |
+| Any | - | will match any characters |
+| DecDigit | - | Match 0-9 only (is_ascii_digit) |
+| Digit | (u8) | Match digit with the specified radix (e.g. 16 for hexadecimal) |
+| Numeric | - | Match number-like $ in the decimal base. Unlike the is_numeric() extension method this excludes . and -. Use to_numbers_conditional() to extract valid decimal number as strings |
+| AlphaNum | - | Match any alphanumeric characters (is_alphanumeric) |
+| Lower | - | Match lower case letters (is_lowercase) |
+| Upper | - | Match upper case letters (is_uppercase) |
+| Alpha | - | Match any letters in most supported alphabets (is_alphabetic) |
+| Spaces | - | Match spaces c.is_whitespace() |
+| Punctuation | - | c.is_ascii_punctuation() |
+| Char | (char) | match a single character |
+| Chars | (&[char]) | Match an array of characters |
+| Range | (Range<char>) | Match an Range e.g. 'a'..'d' will include a, b and c, but not d. This follows the Unicode sequence. |
+| Between | (char, char) | Match characters betweeen the specified characters e.g. Between('a', 'd') will include d. |
 
 ### Structs
 
@@ -386,32 +362,29 @@ Defines categories, sets or ranges of characters as well as single characters.
 
 This struct helps you build string pattern rules for use with the _matched_by_rules()_, _filter_all_rules()_ and _filter_any_rules()_ methods.
 The _bounds_builder()_ function returns a base instance on which you may chain any number of rules and sub-rules.
-
-| Rule type<br /><sup>(with suffix)</sup> | meaning                                            | arguments                                                        | variants                                                                                                |
+| Rule type<br /><sup>(with suffix)</sup> | meaning | arguments | variants |
 | --------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| starting*with*&nbsp;(✓)                 | Starts with                                        | pattern: &str                                                    | \_ci, \_cs, \_ci_alphanum                                                                               |
-| containing\_&nbsp;(✓)                   | Contains                                           | pattern: &str                                                    | \_ci, \_cs, \_ci_alphanum                                                                               |
-| ending*with*&nbsp;(✓)                   | Ends with                                          | pattern: &str                                                    | \_ci, \_cs, \_ci_alphanum                                                                               |
-| is\_&nbsp;(✓)                           | Matches a whole pattern                            | pattern: &str                                                    | \_ci, \_cs, \_ci_alphanum                                                                               |
-| not*starting_with*&nbsp;(✓)             | Does not start withx                               | pattern: &str                                                    | \_ci, \_cs, \_ci_alphanum                                                                               |
-| not*containing*&nbsp;(✓)                | Does not contain                                   | pattern: &str                                                    | \_ci, \_cs, \_ci_alphanum                                                                               |
-| not*ending_with*&nbsp;(✓)               | Does not end with                                  | pattern: &str                                                    | \_ci, \_cs, \_ci_alphanum                                                                               |
-| is*not*&nbsp;(✓)                        | Does not match a whole pattern                     | pattern: &str                                                    | \_ci, \_cs, \_ci_alphanum                                                                               |
-| starts_with (⤬)                         | Starts with                                        | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | -                                                                                                       |
-| contains (⤬)                            | Contains                                           | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | -                                                                                                       |
-| ends_with (⤬)                           | Ends with                                          | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | -                                                                                                       |
-| whole (⤬)                               | Matches a whole pattern                            | pattern: &str , is_positive: bool, case_insensitive: bool        | -                                                                                                       |
-| or (⤬)                                  | Matches any of the specified rules                 | rules: &BoundsBuilder                                            | -                                                                                                       |
-| or\_&nbsp;(✓)                           | Matches any of the patterns with the implicit rule | patterns: &[&str]                                                | all in the starting*with*, containing*, ending_with* and is\_ series                                    |
-| and (⤬)                                 | Matches all the specified rules                    | rules: &BoundsBuilder                                            | -                                                                                                       |
-| and\_&nbsp;(✓)                          | Matches all of the patterns with the implicit rule | patterns: &[&str]                                                | all in the starting*with*, containing*, ending_with* and is* series as well as their \_not* equivalents |
+| starting*with*&nbsp;(✓) | Starts with | pattern: &str | \_ci, \_cs, \_ci_alphanum |
+| containing\_&nbsp;(✓) | Contains | pattern: &str | \_ci, \_cs, \_ci_alphanum |
+| ending*with*&nbsp;(✓) | Ends with | pattern: &str | \_ci, \_cs, \_ci_alphanum |
+| is\_&nbsp;(✓) | Matches a whole pattern | pattern: &str | \_ci, \_cs, \_ci_alphanum |
+| not*starting_with*&nbsp;(✓) | Does not start withx | pattern: &str | \_ci, \_cs, \_ci_alphanum |
+| not*containing*&nbsp;(✓) | Does not contain | pattern: &str | \_ci, \_cs, \_ci_alphanum |
+| not*ending_with*&nbsp;(✓) | Does not end with | pattern: &str | \_ci, \_cs, \_ci_alphanum |
+| is*not*&nbsp;(✓) | Does not match a whole pattern | pattern: &str | \_ci, \_cs, \_ci_alphanum |
+| starts_with (⤬) | Starts with | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | - |
+| contains (⤬) | Contains | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | - |
+| ends_with (⤬) | Ends with | pattern: &str<br />is_positive: bool<br />case_insensitive: bool | - |
+| whole (⤬) | Matches a whole pattern | pattern: &str , is_positive: bool, case_insensitive: bool | - |
+| or (⤬) | Matches any of the specified rules | rules: &BoundsBuilder | - |
+| or\_&nbsp;(✓) | Matches any of the patterns with the implicit rule | patterns: &[&str] | all in the starting*with*, containing*, ending_with* and is\_ series |
+| and (⤬) | Matches all the specified rules | rules: &BoundsBuilder | - |
+| and\_&nbsp;(✓) | Matches all of the patterns with the implicit rule | patterns: &[&str] | all in the starting*with*, containing*, ending_with* and is* series as well as their \_not* equivalents |
 
 ### Dev Notes
 
 This crate serves as a building block for other crates as well as to supplement a future version of _string-patterns_. Some updates reflect minor editorial changes.
-
 _Version 0.3.13_ introduces the `.strip_spaces()` method as shorthand for `.strip_by_type(CharType::Spaces)`.
-
 _Version 0.3.11_ introduces a `.split_to_numbers::<T>(pattern: &str)` method to split a string list of numbers into a vector of the specified number type. This is handy when parsing common input formats such as latitudes and longitudes represented as `"42.282,-89.3938"`. This might fail via `.to_numbers()` when commas or points used as separators may be confused with decimal or thousand separators without other characters in between.
 
 ##### _Version 0.3.8_ New \*and*not*+ rules methods
@@ -429,7 +402,6 @@ This version introduced a set of _and*not*_-prefixed rule methods to filter stri
     "cats-image-873.webp", // OK
     "cat-pic-090.jpg", // OK
   ];
-
   let rules = bounds_builder()
     .or_starting_with_ci(&["cat", "dog"])
     .and_not_ending_with_ci(&[".psd", ".pdf"]);
@@ -437,21 +409,23 @@ This version introduced a set of _and*not*_-prefixed rule methods to filter stri
   /// This should yield ["CAT-pic-912.png", "dOg-photo-876.png", "cats-image-873.webp", "cat-pic-090.jpg"]
 ```
 
-##### _Version 0.3.0_ expands the range of rules available
+##### _Version 0.3.16_ expands the range of rules available
 
-Corrected bug is_numeric() is applied to empty strings.
+Introduced `equals_ci(pattern: &str)` and `equals_ci_alphanum(pattern: &str)` to match whole strings in case-sensitive with or with without non-alphanumeric characters stripped.
+
+##### _Version 0.3.15_ expands the range of rules available
+
+Corrected bug in is_numeric() when used with empty strings.
 
 ##### _Version 0.3.0_ expands the range of rules available
 
 This version introduced a radical revision to the StringBounds enum with supplementary _BoundsPosition_ and _CaseMatchMode_ enums, to handle the full range of rules available via _bounds_builder()_. These rule sets may be used with with the matched_by_rules(), filter_all_rules() and filter_any_rules().
-
 Full documentation for the 0.2.* series is available in the [Github repo](https://github.com/neilg63/simple-string-patterns) in the *v0-2\* branch.
 
 ##### _Version 0.2.5_ introduces SimpleMatchAny and Whole matches in StringBounds.
 
-This supplements SimpleMatchAll to apply _or_ logic with rules sets (StringBound, tuples or simple strs). The StringBounds enum now has whole string match options (with case-insensitive and case-sensitive variants) to accommodate a mix of partial and whole string matches. It also adds a range of single-argument methods for bounds_builder().
-
-Versions of the _string-patterns_ crate before 0.3.0 contained many of these extensions. Since version 0.3.0 all traits, enums and methods defined in this _simple-string-patterns_ have been removed. These crates supplement each other, but may be installed independently.
+This supplements SimpleMatchAll to apply _or_ logic with rules sets (StringBound, tuples or simple strs). The StringBounds enum now has whole string match options (with case-insensitive and case-sensitive variants) to accommodate a mix of partial and whole string matches. It also adds a range of single-argument methods for bounds*builder().
+Versions of the \_string-patterns* crate before 0.3.0 contained many of these extensions. Since version 0.3.0 all traits, enums and methods defined in this _simple-string-patterns_ have been removed. These crates supplement each other, but may be installed independently.
 
 ##### Version 0.2.2 introduces three new features:
 

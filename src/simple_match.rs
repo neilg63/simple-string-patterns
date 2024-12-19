@@ -4,6 +4,13 @@ use crate::{enums::StringBounds, utils::{pairs_to_string_bounds, strs_to_string_
 /// There are no plain and _cs-suffixed variants because the standard
 /// starts_with(pat: &str), contains(pat: &str) and ends_with(pat: &str) methods meet those needs
 pub trait SimpleMatch {
+
+  /// Matches the whole string in case-insensitive mode
+  fn equals_ci(&self, pattern: &str) -> bool;
+
+  /// Matches the the plain Latin letters [a-z] and numerals [0=9] in the string in case-insensitive mode
+  fn equals_ci_alphanum(&self, pattern: &str) -> bool;
+
   /// Starts with a case-insensitive alphanumeric sequence
   fn starts_with_ci(&self, pattern: &str) -> bool;
   
@@ -25,6 +32,17 @@ pub trait SimpleMatch {
 
 /// Implementation for &str/String 
 impl SimpleMatch for str {
+
+   /// Starts with a case-insensitive sequence
+  fn equals_ci(&self, pattern: &str) -> bool {
+    self.to_lowercase() == pattern.to_lowercase()
+  }
+  
+  /// Starts with a case-insensitive alphanumeric sequence
+  fn equals_ci_alphanum(&self, pattern: &str) -> bool {
+    self.to_lowercase().strip_non_alphanum() ==  pattern.to_lowercase().strip_non_alphanum()
+  }
+
   /// Starts with a case-insensitive sequence
   fn starts_with_ci(&self, pattern: &str) -> bool {
     self.to_lowercase().starts_with(&pattern.to_lowercase())
