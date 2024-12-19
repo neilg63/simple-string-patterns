@@ -2,6 +2,14 @@ use simple_string_patterns::*;
 
 #[cfg(test)]
 
+
+
+#[test]
+fn test_equals_case_insensitive_with_alphanum_only() {
+  let source_str = "Start-Up";
+  assert!(source_str.equals_ci_alphanum("startup"));
+}
+
 #[test]
 fn test_simple_filter_all() {
   let source_strs = [
