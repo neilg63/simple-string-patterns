@@ -195,6 +195,23 @@ fn test_to_start_end() {
 }
 
 #[test]
+fn test_to_start() {
+  let source_str = "one,two,three";
+  assert_eq!(source_str.to_start(","), "one,two".to_string());
+  let source_str = "one/two/three/";
+  assert_eq!(source_str.to_remainder_start("/"), "one/two".to_string() );
+}
+
+#[test]
+fn test_to_end() {
+  let source_str = "one,two,three";
+  assert_eq!(source_str.to_end(","), "three".to_string());
+  assert_eq!(source_str.to_tail(","), "two,three".to_string());
+  let source_str = "/one/two/three";
+  assert_eq!(source_str.to_remainder_end("/"), "two/three".to_string() );
+}
+
+#[test]
 fn test_array_str_to_vec_string() {
   let source_strs = [
     "one",

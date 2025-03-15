@@ -31,6 +31,10 @@ pub trait ToSegments {
   /// Extract only the last segment
   fn to_end(&self, separator: &str) -> String;
 
+  /// Extract the start before the last occurrence of the separator
+  /// or the whole string if the separator is absent
+  fn to_start(&self, separator: &str) -> String;
+
   /// Extract a non-empty segment identified by its index from the components of a string with a given separator
   /// e.g. String::from("/User/maria/Documents") .to_segment(1) yields "maria"
   /// with the leading slash separator ignored
@@ -101,12 +105,15 @@ impl ToSegments for str {
 
   /// extract the last segment whether empty or not
   fn to_end(&self, separator: &str) -> String {
-    let parts = self.to_parts(separator);
-    if let Some(end) = parts.last() {
-      end.to_owned()
-    } else {
-      self.to_owned()
-    }
+    let (_start, end) = self.to_start_end(separator);
+    end
+  }
+
+  /// extract the start before last occurrence of the separator
+  /// or, if absent, return the whole string
+  fn to_start(&self, separator: &str) -> String {
+    let (start, _end) = self.to_start_end(separator);
+    start
   }
 
   /// extract the remainder after the first split 
@@ -146,9 +153,9 @@ impl ToSegments for str {
     let separator_len = separator.len();
     if self.ends_with(separator) && self.len() > separator_len {
       let end_index = self.len() - separator_len;
-      self[0..end_index].to_string().to_tail(separator)
+      self[0..end_index].to_string().to_start(separator)
     } else {
-      self.to_tail(separator)
+      self.to_start(separator)
     }
   }
 

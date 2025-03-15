@@ -409,6 +409,9 @@ This version introduced a set of _and*not*_-prefixed rule methods to filter stri
   /// This should yield ["CAT-pic-912.png", "dOg-photo-876.png", "cats-image-873.webp", "cat-pic-090.jpg"]
 ```
 
+##### *Version 0.3.17* Added new `to_start(separator: &str)` and `to_remainder_start(separator: &str)` method
+This version introduced a missing `to_start(&str)` method to return the start of a string before the last occurrence of the separator, i.e. to opposite `to_tail()`. `to_remainder_start()` supplements this method returning start of a string before the last non-final occurrence of a separator, e.g. with the string `one/two/three/`, `to_remainder_start("/")` yields `one/two`, while `to_start("/")` yields `one/two/three`, removing only the trailing slash.
+
 ##### _Version 0.3.16_ expands the range of rules available
 
 Introduced `equals_ci(pattern: &str)` and `equals_ci_alphanum(pattern: &str)` to match whole strings in case-sensitive with or with without non-alphanumeric characters stripped.
