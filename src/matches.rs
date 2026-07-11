@@ -1,4 +1,5 @@
-use alphanumeric::{CharType, StripCharacters};
+use crate::ci_engine;
+use alphanumeric::CharType;
 
 /// Regex-free matcher methods for common use cases
 /// There are no plain and _cs-suffixed variants because the standard
@@ -31,51 +32,35 @@ pub trait SimpleMatch {
 
 impl<T: AsRef<str>> SimpleMatch for T {
     fn equals_ci(&self, pattern: &str) -> bool {
-        self.as_ref().to_lowercase() == pattern.to_lowercase()
+        ci_engine::ci_eq(self.as_ref(), pattern)
     }
 
     fn equals_ci_alphanum(&self, pattern: &str) -> bool {
-        self.as_ref().to_lowercase().strip_non_alphanum()
-            == pattern.to_lowercase().strip_non_alphanum()
+        ci_engine::ci_alphanum_eq(self.as_ref(), pattern)
     }
 
     fn starts_with_ci(&self, pattern: &str) -> bool {
-        self.as_ref()
-            .to_lowercase()
-            .starts_with(&pattern.to_lowercase())
+        ci_engine::ci_starts_with(self.as_ref(), pattern)
     }
 
     fn starts_with_ci_alphanum(&self, pattern: &str) -> bool {
-        self.as_ref()
-            .to_lowercase()
-            .strip_non_alphanum()
-            .starts_with(&pattern.to_lowercase())
+        ci_engine::ci_alphanum_starts_with(self.as_ref(), pattern)
     }
 
     fn ends_with_ci(&self, pattern: &str) -> bool {
-        self.as_ref()
-            .to_lowercase()
-            .ends_with(&pattern.to_lowercase())
+        ci_engine::ci_ends_with(self.as_ref(), pattern)
     }
 
     fn ends_with_ci_alphanum(&self, pattern: &str) -> bool {
-        self.as_ref()
-            .to_lowercase()
-            .strip_non_alphanum()
-            .ends_with(&pattern.to_lowercase())
+        ci_engine::ci_alphanum_ends_with(self.as_ref(), pattern)
     }
 
     fn contains_ci(&self, pattern: &str) -> bool {
-        self.as_ref()
-            .to_lowercase()
-            .contains(&pattern.to_lowercase())
+        ci_engine::ci_contains(self.as_ref(), pattern)
     }
 
     fn contains_ci_alphanum(&self, pattern: &str) -> bool {
-        self.as_ref()
-            .to_lowercase()
-            .strip_non_alphanum()
-            .contains(&pattern.to_lowercase())
+        ci_engine::ci_alphanum_contains(self.as_ref(), pattern)
     }
 }
 

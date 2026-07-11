@@ -2,6 +2,7 @@
 pub mod bounds_builder;
 #[cfg(feature = "chain")]
 pub mod chain;
+mod ci_engine;
 #[cfg(feature = "rules")]
 pub mod enums;
 pub mod matches;
