@@ -13,9 +13,9 @@ dependencies = [
 
 [[package]]
 name = "alphanumeric"
-version = "0.1.2"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c4584f31bc975f42e638b7dba53e9a36f59d73154995e8b1840aa7a70a6068b5"
+checksum = "497c98358c446f25a9818840e5ce86908d3ef2a0d6099ccc410a8f0eda4cd055"
 dependencies = [
  "to_segments",
 ]

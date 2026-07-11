@@ -14,6 +14,7 @@
 //! per-original-character order rather than fully-expanded order; `_eq`, `_starts_with` and
 //! `_contains` are unaffected. This only applies on the (already rare) non-ASCII fallback path.
 
+use alphanumeric::StripCharacters;
 use std::collections::VecDeque;
 
 // ---------------------------------------------------------------------------
@@ -24,11 +25,12 @@ fn lower_chars(s: &str) -> impl Iterator<Item = char> + '_ {
     s.chars().flat_map(char::to_lowercase)
 }
 
-fn alphanum_lower_chars(s: &str) -> impl Iterator<Item = char> + '_ {
-    s.chars()
-        .filter(|c| c.is_alphanumeric())
-        .flat_map(char::to_lowercase)
-}
+// Note: deliberately not a named `fn ... -> impl Iterator + '_` wrapper like `lower_chars`
+// above — a free function whose own return type is `impl Trait` and that internally calls
+// a trait method whose return type is *also* `impl Trait` (RPITIT, like `alphanumeric_chars`
+// below) hits a rustc limitation composing the two opaque types (E0515, "cannot return value
+// referencing function parameter"), even though the equivalent expression compiles fine
+// inline or passed straight into a generic function. So this stays inlined at each call site.
 
 fn starts_with_iter<I: Iterator<Item = char>>(mut subject: I, needle: &[char]) -> bool {
     for &nc in needle {
@@ -227,8 +229,8 @@ pub(crate) fn ci_alphanum_eq(subject: &str, pattern: &str) -> bool {
         let needle: Vec<u8> = ascii_alphanum_lower_bytes(pattern.as_bytes()).collect();
         eq_byte_iter(ascii_alphanum_lower_bytes(subject.as_bytes()), &needle)
     } else {
-        let needle: Vec<char> = alphanum_lower_chars(pattern).collect();
-        eq_iter(alphanum_lower_chars(subject), &needle)
+        let needle: Vec<char> = pattern.alphanumeric_chars().flat_map(char::to_lowercase).collect();
+        eq_iter(subject.alphanumeric_chars().flat_map(char::to_lowercase), &needle)
     }
 }
 
@@ -237,8 +239,8 @@ pub(crate) fn ci_alphanum_starts_with(subject: &str, pattern: &str) -> bool {
         let needle: Vec<u8> = ascii_alphanum_lower_bytes(pattern.as_bytes()).collect();
         starts_with_byte_iter(ascii_alphanum_lower_bytes(subject.as_bytes()), &needle)
     } else {
-        let needle: Vec<char> = alphanum_lower_chars(pattern).collect();
-        starts_with_iter(alphanum_lower_chars(subject), &needle)
+        let needle: Vec<char> = pattern.alphanumeric_chars().flat_map(char::to_lowercase).collect();
+        starts_with_iter(subject.alphanumeric_chars().flat_map(char::to_lowercase), &needle)
     }
 }
 
@@ -256,13 +258,9 @@ pub(crate) fn ci_alphanum_ends_with(subject: &str, pattern: &str) -> bool {
             &needle,
         )
     } else {
-        let needle: Vec<char> = alphanum_lower_chars(pattern).collect();
+        let needle: Vec<char> = pattern.alphanumeric_chars().flat_map(char::to_lowercase).collect();
         ends_with_iter(
-            subject
-                .chars()
-                .rev()
-                .filter(|c| c.is_alphanumeric())
-                .flat_map(char::to_lowercase),
+            subject.alphanumeric_chars().rev().flat_map(char::to_lowercase),
             &needle,
         )
     }
@@ -273,8 +271,8 @@ pub(crate) fn ci_alphanum_contains(subject: &str, pattern: &str) -> bool {
         let needle: Vec<u8> = ascii_alphanum_lower_bytes(pattern.as_bytes()).collect();
         contains_byte_iter(ascii_alphanum_lower_bytes(subject.as_bytes()), &needle)
     } else {
-        let needle: Vec<char> = alphanum_lower_chars(pattern).collect();
-        contains_iter(alphanum_lower_chars(subject), &needle)
+        let needle: Vec<char> = pattern.alphanumeric_chars().flat_map(char::to_lowercase).collect();
+        contains_iter(subject.alphanumeric_chars().flat_map(char::to_lowercase), &needle)
     }
 }
 

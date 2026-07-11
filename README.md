@@ -7,22 +7,62 @@
 This library makes it easier to match, split and extract strings in Rust. It builds on the Rust standard library. A parallel [string-patterns](https://crates.io/crates/string-patterns) crate provides extensions to work with _regular expressions_. Together, these crates aim to make working with strings as easy in Rust as it is Javascript or Python with cleaner syntax.
 Simpler string matching methods such as `starts_with`, `contains` or `ends_with` will always perform better, especially when processing large data sets. Methods such as `equals_ci`, `equals_ci_alphanum`, `starts_with_ci` and `starts_with_ci_alphanum` build on these core methods to facilitate string manipulation without _regular expressions_.
 
-In version 0.4.0, only the core methods are included by default with string bounds rule sets offered as an optional feature and other supplementary functions transferred to other library crates.
+In version 0.4.0, only the core methods are included by default. String bounds rule sets and the fluent match chain are both opt-in features, and other supplementary functions have been transferred to other library crates.
+
+A compelling case for this crate is small microservices and CLI utilities that parse predictable, pre-formatted text output from other tools or services — log lines, status messages, command output — where a regex is overkill and manually normalizing case and punctuation by hand is repetitive boilerplate. It's tempting to reach for `contains()` to spot a severity level in a log line, but that gives false positives whenever the word shows up incidentally in the message body rather than as the actual tag:
+
+```rust
+let warning_msg = "[warning] high CPU usage. This may cause errors.";
+let error_msg = "[error] cannot divide by 0. You have been warned";
+
+warning_msg.contains_ci("error"); // true — WRONG, this is a warning, not an error
+error_msg.contains_ci("warn");    // true — WRONG, this is an error, not a warning
+```
+
+Anchoring the check with `starts_with_ci_alphanum` instead of scanning the whole message avoids that, since it only looks at the tag, not the prose that follows:
+
+```rust
+warning_msg.starts_with_ci_alphanum("warning"); // true
+warning_msg.starts_with_ci_alphanum("error");   // false
+error_msg.starts_with_ci_alphanum("error");     // true
+error_msg.starts_with_ci_alphanum("warning");   // false
+```
+
+It's also more robust than an exact literal prefix check, since it strips punctuation from both sides before comparing — so it survives the tag's delimiters changing (e.g. a log format moving from `[warning]` to `**warning**:`) without needing to be updated:
+
+```rust
+let reformatted = "**warning**: High CPU usage";
+reformatted.starts_with_ci("[warning]");        // false — breaks: the delimiters changed
+reformatted.starts_with_ci_alphanum("warning"); // true — still works
+```
+
+which in turn is more direct than doing the equivalent normalization by hand:
+
+```rust
+if input_string
+    .to_lowercase()
+    .chars()
+    .filter(|c| c.is_alphanumeric())
+    .collect::<String>()
+    .starts_with("warning") {
+  // ...
+}
+```
+
+and, as of the 0.4.0 `ci_engine` rewrite, no longer pays for building that intermediate `String` on every call either — see [Simple Patterns versus Regular Expressions](#simple-patterns-versus-regular-expressions) below. Above all, it simply avoids the need to add regex as a dependency at all for a lightweight app that only has to check log files or call out to other CLI tools — no extra compile time or binary size for a job this small.
 
 ## Features
 
-The crate core is always just the `SimpleMatch`, `MatchOccurrences` and `SimplContainsType` traits (in `matches.rs`) — no other functionality compiles without opting in via Cargo features.
+The crate core is always just the `SimpleMatch`, `MatchOccurrences` and `SimplContainsType` traits (in `matches.rs`) — no other functionality compiles without opting in via Cargo features. Neither `rules` nor `chain` is enabled by default.
 
 | Feature | Default | Adds |
 | ------- | ------- | ---- |
 | _(none)_ | always on | `SimpleMatch`, `MatchOccurrences`, `SimplContainsType` — plain `_ci`/`_cs`/`_ci_alphanum` matching methods |
-| `rules` | ✓ (on by default) | `bounds_builder()`, `BoundsBuilder`, `StringBounds` and the `_conditional`/`_rules` methods for composable, reusable rule sets applied to many strings |
+| `rules` | ✗ (opt-in) | `bounds_builder()`, `BoundsBuilder`, `StringBounds` and the `_conditional`/`_rules` methods for composable, reusable rule sets applied to many strings |
 | `chain` | ✗ (opt-in) | `StringMatch` and the `match_*`/`and_*`/`or_*` fluent chain for combining several checks on a single string, see below |
 
-To disable `rules` and take only the core, add the dependency with `default-features = false`. To add the `chain` feature:
-
 ```toml
-simple-string-patterns = { version = "0.4", features = ["chain"] }
+simple-string-patterns = { version = "0.4", features = ["rules", "chain"] }
 ```
 
 ## Dependencies
@@ -38,7 +78,9 @@ The string-splitting and enclosing functionality previously bundled in this crat
 
 ## Simple Patterns versus Regular Expressions
 
-_simple-string-patterns_ aims to improve readability and minimise overhead in lightweight applications that would not otherwise need regex support. Under the hood, regular expression engines compile regex syntax and convert them into more efficient string matching subroutines. Preliminary benchmarks show that rule sets with basic matching methods such as _contains_ci_ perform better than their regex counterparts, but if you need to add multiple nested rules, a _regex_ may be faster. The sibling regex-powered _string-patterns_ crate makes this very easy. This crate is best suited to small utilities that need to process large quantities of strings with a range of highly predictable formats, e.g. in cryptography, logging.
+_simple-string-patterns_ aims to improve readability and minimise overhead in lightweight applications that would not otherwise need regex support. Under the hood, regular expression engines compile regex syntax and convert them into more efficient string matching subroutines.
+
+Benchmarked against a compiled `regex` over 200,000 synthetic log lines (`"line".starts_with_ci_alphanum("float") && "line".contains_ci("error")` vs `/^[^a-z0-9]*float.*error/i`): the two are now close, ~29ns/line for this crate's methods versus ~15ns/line for the compiled regex — a modest, not dramatic, gap. `starts_with_ci`/`ends_with_ci`/`equals_ci` can bail out after inspecting only a handful of characters and are the strongest case for this crate; `contains_ci` alone has to scan the whole string and is the part of that gap that remains, since `regex`'s substring search (two-way algorithm plus a `memchr`-based literal prefilter) is hard to beat without reimplementing it. If you need to add multiple nested rules or complex patterns, a _regex_ is likely to stay faster and more flexible — the sibling regex-powered _string-patterns_ crate makes that easy, and as of its own 0.4.0 shares a single compiled-once regex cache across all its matching methods, so "compile once, apply to many rows" is no longer something you have to build yourself in either crate. This crate is best suited to small utilities that need to process large quantities of strings with a range of highly predictable formats, e.g. in cryptography, logging.
 
 ### Method overview
 
@@ -160,7 +202,7 @@ let numbers = sample_str.split_to_numbers::<f64>(",");
 // should yield vec![34.2929,-93.701]; (Vec<f64>)
 ```
 
-##### Match by all or any pattern rules without regular expressions
+##### Match by all or any pattern rules without regular expressions (`rules` feature)
 
 ```rust
 // Call .as_vec() to convert the BoundsBuilder to a slice of StringBounds rules
@@ -179,7 +221,7 @@ sample_name_1.match_any_conditional(&mixed_conditions.as_vec()); // true
 sample_name_2.match_any_conditional(&mixed_conditions.as_vec()); // true
 ```
 
-##### Filter by all pattern rules without regular expressions
+##### Filter by all pattern rules without regular expressions (`rules` feature)
 
 ```rust
 // The same array may also be expressed via the new bounds_builder() function with chainable rules:
@@ -200,7 +242,7 @@ let nepal_source_files: Vec<&str> = file_names.filter_all_rules(&mixed_condition
 // This will now return Vec<&str> or Vec<String> depending on the source string type.
 ```
 
-##### Nested Rule Sets
+##### Nested Rule Sets (`rules` feature)
 
 As of version 0.3.0 you may add nested rule sets with _and_ / _or_ logic. The former case is true only if all conditions are met, while the latter is true if any of the conditions are met. The _BoundsBuilder_ struct now has a set of methods starting with _and_ or _or_. You may call _and(rules: BoundsBuilder)_ or _or(rules: BoundsBuilder)_ directly with a nested rule set if you have a mix of rule types. However, if all rules have the same bounds, other methods accepting a simple array of patterns are available, e.g.
 
@@ -228,7 +270,7 @@ let matched_files = filenames.filter_all_rules(&rules);
 
 The above example reproduces the following example _regular expression_ /(cat|dog).\*?\.jpe?g$/. The \_alphanum-suffixed variants let match only on numbers and letters within a string, i.e. ignorning any spaces or punctuation.
 
-##### Filter by any pattern rules without regular expressions
+##### Filter by any pattern rules without regular expressions (`rules` feature)
 
 ```rust
 // The same array may also be expressed via the new bounds_builder() function with chainable rules:
@@ -376,9 +418,15 @@ The _bounds_builder()_ function returns a base instance on which you may chain a
 
 This crate serves as a building block for other crates as well as to supplement a future version of _string-patterns_. Some updates reflect minor editorial changes.
 
-##### _Version 0.4.0_ streamlines the crate
+##### _Version 0.4.0_ streamlines the crate, fixes a performance regression, and corrects two bugs
 
-The `ToSegments`, `ToSegmentFromChars`, `SimpleEnclose` and `ToStrings` traits described in earlier versions of these notes have been removed from this crate and now live in the standalone [to_segments](https://crates.io/crates/to_segments) and [enclose-strings](https://crates.io/crates/enclose-strings) crates (see [Supplementary crates](#supplementary-crates) above). The string bounds rule set (`bounds_builder()`, `StringBounds`, and the `_rules`/`_conditional` methods) is now gated behind the `rules` feature, enabled by default. A new opt-in `chain` feature (disabled by default) adds `StringMatch`, a fluent `match_*`/`and_*`/`or_*` chain for combining several checks on one string — see [Features](#features) and the chaining example above. With every feature disabled, the crate exposes only `SimpleMatch`, `MatchOccurrences` and `SimplContainsType`.
+**Crate structure.** The `ToSegments`, `ToSegmentFromChars`, `SimpleEnclose` and `ToStrings` traits described in earlier versions of these notes have been removed from this crate and now live in the standalone [to_segments](https://crates.io/crates/to_segments) and [enclose-strings](https://crates.io/crates/enclose-strings) crates (see [Supplementary crates](#supplementary-crates) above). The string bounds rule set (`bounds_builder()`, `StringBounds`, and the `_rules`/`_conditional` methods) is now gated behind the `rules` feature, and a new `chain` feature adds `StringMatch`, a fluent `match_*`/`and_*`/`or_*` chain for combining several checks on one string (see [Features](#features) and the chaining example above) — **neither feature is enabled by default.** By default the crate now exposes only `SimpleMatch`, `MatchOccurrences` and `SimplContainsType`.
+
+> **Upgrading from 0.3.x:** `BoundsBuilder`/`bounds_builder()`/`StringBounds` were always compiled in on 0.3.x. If you use them, add `features = ["rules"]` explicitly — without it, code that called `bounds_builder()` will fail to compile after upgrading to 0.4.0, not just silently lose behaviour.
+
+**Performance.** The `_ci`/`_ci_alphanum` methods on `SimpleMatch` (`contains_ci`, `starts_with_ci_alphanum`, etc.) are now backed by an internal `ci_engine` module instead of the previous `self.to_lowercase().strip_non_alphanum()...` approach, which allocated a full transformed copy of the *subject* string on every call. The new implementation dispatches to a byte-level ASCII fast path (no allocation, no UTF-8 decoding) when both the subject and pattern are ASCII, falling back to a Unicode-correct character stream otherwise (café/naïve-style input is still handled correctly — see the tests in `ci_engine.rs`). Method names and `bool` return types are unchanged; only the internals got faster. See [Simple Patterns versus Regular Expressions](#simple-patterns-versus-regular-expressions) above for current numbers against a compiled regex, and `benches/matching.rs` (run with `cargo bench`) to reproduce them.
+
+**Bug fixes.** `starts_with_ci_alphanum`, `ends_with_ci_alphanum` and `contains_ci_alphanum` now strip non-alphanumeric characters from *both* the subject and the pattern, matching `equals_ci_alphanum`'s existing behaviour — previously only the subject was stripped, so a pattern containing punctuation or spaces behaved inconsistently across these methods. Separately, `BoundsBuilder::and_starting_with_ci` (rules feature) was silently installing the *negated* rule instead of the positive one it's named for, due to a copy-paste mistake; it now behaves as documented, and a regression test (`test_and_starting_with_ci_positive`) covers it.
 
 _Version 0.3.13_ introduces the `.strip_spaces()` method as shorthand for `.strip_by_type(CharType::Spaces)`.
 _Version 0.3.11_ introduces a `.split_to_numbers::<T>(pattern: &str)` method to split a string list of numbers into a vector of the specified number type. This is handy when parsing common input formats such as latitudes and longitudes represented as `"42.282,-89.3938"`. This might fail via `.to_numbers()` when commas or points used as separators may be confused with decimal or thousand separators without other characters in between.
