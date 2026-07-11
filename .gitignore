@@ -1,1 +1,31 @@
+# Build artifacts
 /target
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.iml
+.vs/
+.fleet/
+.zed/
+.helix/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*~
+
+# AI coding assistants
+.claude
+.cursor/
+.windsurf/
+.continue/
+.aider*
+.clinerules/
+.roo/
+.codeium/
+.cody/

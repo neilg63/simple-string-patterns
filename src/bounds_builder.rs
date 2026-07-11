@@ -384,7 +384,7 @@ impl<'a> BoundsBuilder<'a> {
   }
 
   pub fn and_starting_with_ci(&mut self, patterns: &'a [&str]) -> Self {
-    self.and_not_starts_with(patterns, CaseMatchMode::Insensitive);
+    self.and_starts_with(patterns, CaseMatchMode::Insensitive);
     self.to_owned()
   }
 

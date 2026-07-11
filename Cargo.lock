@@ -3,5 +3,23 @@
 version = 4
 
 [[package]]
+name = "alphanumeric"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4584f31bc975f42e638b7dba53e9a36f59d73154995e8b1840aa7a70a6068b5"
+dependencies = [
+ "to_segments",
+]
+
+[[package]]
 name = "simple-string-patterns"
-version = "0.3.17"
+version = "0.4.0"
+dependencies = [
+ "alphanumeric",
+]
+
+[[package]]
+name = "to_segments"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4a31b9217f3bf6330cc57fc844a853bfd0dd37c30572bccdfe236d193209ff91"

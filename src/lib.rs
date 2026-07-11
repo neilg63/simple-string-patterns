@@ -1,30 +1,28 @@
-mod utils;
-pub mod enums;
-pub mod alphanumeric;
-pub mod segments;
-pub mod simple_match;
-pub mod enclose;
-pub mod to_strings;
-pub mod char_type;
+#[cfg(feature = "rules")]
 pub mod bounds_builder;
+#[cfg(feature = "chain")]
+pub mod chain;
+#[cfg(feature = "rules")]
+pub mod enums;
+pub mod matches;
+#[cfg(feature = "rules")]
+pub mod rules;
+#[cfg(feature = "rules")]
+mod utils;
 
-/// This library provides a set of traits and extension methods for &str and/or String
-/// to facilitate common string manipulations routines that may otherwise require multiple steps
-/// Some methods have variants with a case_insensitive flag and without (_ci and _cs).
-/// Always consider the simplest strategy for extracting text, e.g. via to_head_tail(), to_segments().
-
-/// Core enums defining string matching rules and relative positions
-pub use crate::enums::*;
-/// Methods to strip or filter character types within strings and to extract integers or floats
-pub use crate::alphanumeric::*;
-/// Split strings into tuples or vectors of strings
-pub use crate::segments::*;
-/// Simple string match methods
-pub use crate::simple_match::*;
-/// Wrap or enclose strings in matching or complementary characters
-pub use crate::enclose::*;
-/// cast to vector of owned strings
-pub use crate::to_strings::*;
-pub use crate::char_type::*;
-/// rules builder
+/// Build a set of string matching rules
+#[cfg(feature = "rules")]
 pub use crate::bounds_builder::*;
+/// Fluent, chainable and_*/or_* match expressions over a single string
+#[cfg(feature = "chain")]
+pub use crate::chain::*;
+/// Core enums defining string matching rules and relative positions
+#[cfg(feature = "rules")]
+pub use crate::enums::*;
+/// Simple string match methods
+pub use crate::matches::*;
+/// Methods with string bounds rules
+#[cfg(feature = "rules")]
+pub use crate::rules::*;
+/// Methods to strip or filter character types within strings and to extract integers or floats
+pub use alphanumeric::{CharGroupMatch, CharType, IsNumeric, StripCharacters};

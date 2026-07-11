@@ -6,11 +6,39 @@
 
 This library makes it easier to match, split and extract strings in Rust. It builds on the Rust standard library. A parallel [string-patterns](https://crates.io/crates/string-patterns) crate provides extensions to work with _regular expressions_. Together, these crates aim to make working with strings as easy in Rust as it is Javascript or Python with cleaner syntax.
 Simpler string matching methods such as `starts_with`, `contains` or `ends_with` will always perform better, especially when processing large data sets. Methods such as `equals_ci`, `equals_ci_alphanum`, `starts_with_ci` and `starts_with_ci_alphanum` build on these core methods to facilitate string manipulation without _regular expressions_.
-Version 0.3.0 sees a radical revision of the enums used to define string matching rules in the _matched_by_rules()_, _matched_conditional()_, _filter_all_rules()_ and _filter_any_rules()_ methods.
+
+In version 0.4.0, only the core methods are included by default with string bounds rule sets offered as an optional feature and other supplementary functions transferred to other library crates.
+
+## Features
+
+The crate core is always just the `SimpleMatch`, `MatchOccurrences` and `SimplContainsType` traits (in `matches.rs`) — no other functionality compiles without opting in via Cargo features.
+
+| Feature | Default | Adds |
+| ------- | ------- | ---- |
+| _(none)_ | always on | `SimpleMatch`, `MatchOccurrences`, `SimplContainsType` — plain `_ci`/`_cs`/`_ci_alphanum` matching methods |
+| `rules` | ✓ (on by default) | `bounds_builder()`, `BoundsBuilder`, `StringBounds` and the `_conditional`/`_rules` methods for composable, reusable rule sets applied to many strings |
+| `chain` | ✗ (opt-in) | `StringMatch` and the `match_*`/`and_*`/`or_*` fluent chain for combining several checks on a single string, see below |
+
+To disable `rules` and take only the core, add the dependency with `default-features = false`. To add the `chain` feature:
+
+```toml
+simple-string-patterns = { version = "0.4", features = ["chain"] }
+```
+
+## Dependencies
+
+- [**alphanumeric**](https://crates.io/crates/alphanumeric) — Provides `IsNumeric`, `StripCharacters`, and `CharGroupMatch` traits for international number format parsing, character filtering, and numeric string extraction
+
+## Supplementary crates
+
+The string-splitting and enclosing functionality previously bundled in this crate now lives in standalone crates. They are not dependencies of _simple-string-patterns_, but pair well with it if you need that functionality too:
+
+- [**to_segments**](https://crates.io/crates/to_segments) — The `ToSegments` trait for ergonomic string splitting with readable methods for common manipulation tasks.
+- [**enclose-strings**](https://crates.io/crates/enclose-strings) — Wrap or enclose strings in matching or complementary characters with optional escaping.
 
 ## Simple Patterns versus Regular Expressions
 
-The main advantages of _simple-string-patterns_ lie in readability and miniminal overhead in lightweight applications that would not otherwise need regex support. Under the hood, regular expression engines compile regex syntax and convert them into more efficient string matching subroutines. Preliminary benchmarks show that rule sets with basic matching methods such as _contains_ci_ perform better than their regex counterparts, but if you need to add multiple nested rules, a _regex_ may be faster. The sibling regex-powered _string-patterns_ crate makes this very easy. This crate is best suited to small utilities that need to process large quantities of strings with a range of highly predictable formats, e.g. in cryptography, logging.
+_simple-string-patterns_ aims to improve readability and minimise overhead in lightweight applications that would not otherwise need regex support. Under the hood, regular expression engines compile regex syntax and convert them into more efficient string matching subroutines. Preliminary benchmarks show that rule sets with basic matching methods such as _contains_ci_ perform better than their regex counterparts, but if you need to add multiple nested rules, a _regex_ may be faster. The sibling regex-powered _string-patterns_ crate makes this very easy. This crate is best suited to small utilities that need to process large quantities of strings with a range of highly predictable formats, e.g. in cryptography, logging.
 
 ### Method overview
 
@@ -20,20 +48,12 @@ The main advantages of _simple-string-patterns_ lie in readability and miniminal
 | \_ci <sub>⇥</sub>                  | case-insensitive (cast to lower case for comparison)                                                            |
 | \_cs <sub>⇥</sub>                  | case-sensitive                                                                                                  |
 | \_ci_alphanum <sub>⇥</sub>         | case-insensitive match on only alphanumeric letters in the sample string                                        |
-| \_rules <sub>⇥</sub>               | Accepts a set of rules defined via bounds_builder(), see below for examples                                     |
-| \_conditional <sub>⇥</sup>         | Accepts an array of StringBounds rules, mainly for internal use                                                 |
 | strip*by* <sub>⇤</sub>             | Return a string without the specified character type(s)                                                         |
 | filter*by* <sub>⇤</sub>            | Return a string with only specified character type(s)                                                           |
 | filter_all <sub>⇤</sub>            | Filter arrays or vectors that match all of the rules (and logic)                                                |
 | filter_any <sub>⇤</sub>            | filter arrays or vectors that match any of the rules (or logic)                                                 |
-| to_parts <sub>⇤</sup>              | To a vector of string parts split by a separator                                                                |
-| to_segments <sub>⇤</sub>           | To a vector of non-empty string parts split by a separator                                                      |
-| \_part(s) <sub>↔︎⇥</sub>           | Including leading or trailing separators and may return empty elements in vectors                               |
-| \_segment(s)\* <sub>↔︎⇥</sub>      | Excluding leading, trailing, repeated consecutive separators and thus exclude empty elements                    |
-| \_head, \_tail <sub>↔︎⇥</sub>      | With split methods, head means the segment before the first split and tail the remainder                        |
-| \_start, \_end <sub>↔︎⇥</sub>      | _start_ means the whole string before the last split and _end_ only the last part of the last matched separator |
-| \_escaped <sub>⇥</sub>             | Add an optional escape character parameter with _enclose_ or _wrap_ methods                                     |
-| \_safe <sub>⇥</sub>                | Insert a backslash before the any non-final occurrences of the closing characters unless already present        |
+| \_rules <sub>⇥</sub>               | (**rules feature**) Accepts a set of rules defined via bounds_builder(), see below for examples                                     |
+| \_conditional <sub>⇥</sup>         | (**rules feature**) Accepts an array of StringBounds rules, mainly for internal use                                                 |
 
 ##### Simple case-insensitive match
 
@@ -64,48 +84,43 @@ if str_1.equals_ci_alphanum("startup") {
 
 ```rust
 // Methods ending in _alphanum are good for filtering strings that may have other
-// to_strings() converts an array of &str references to a vector of strings
+// punctuation or casing inconsistencies around the part you care about
 let sample_strs = [
   "/blue-sky.jpg",
   "----bluesky.png",
   "-B-l-u-e--sky",
   "Blueberry",
   " Blue sky thinking"
-].to_strings();
+];
 let strings_starting_with_blue = sample_strs
   .into_iter()
   .filter(|s| s.starts_with_ci_alphanum("bluesky"))
-  .collect::<Vec<String>>();
+  .collect::<Vec<&str>>();
 // should return all except "Blueberry"
 ```
 
-##### Extract the third non-empty segment of a long path name
+##### Chain several checks on one string (`chain` feature)
 
 ```rust
-let path_string = "/var/www/mysite.com/web/uploads";
-if let Some(domain) = path_string.to_segment("/", 2) {
-  println!("The domain folder name is: {}", domain); // "mysite.com" is an owned string
-}
-```
+// Requires the optional "chain" feature. Unlike contains_ci() and starts_with_ci_alphanum(),
+// which return a plain bool and so cannot be chained further, match_contains_ci() returns a
+// StringMatch that carries the accumulated result and the subject string through the chain.
+let sample_1 = "Floating-point error at line 667";
+let sample_2 = "[floating-point] error in line 999";
+let sample_3 = "Rounding error at line 12";
 
-##### Extract the _head and tail_ or _start and end_ from a longer string
+let is_float_error = |s: &str| s.match_contains_ci("error")
+  .and_starts_with_ci_alphanum("float")
+  .result();
 
-```rust
-let test_string = "long-list-of-technical-words"
-let (head, tail) = test_string.to_head_tail("-");
-println!("Head: {}, tail: {}", head, tail); // Head: long, tail: list-of-technical-words
-let (start, end) = test_string.to_start_end("-");
-println!("Start: {}, end: {}", start, end); // Start: long-list-of-technical, end: words
-```
+assert!(is_float_error(sample_1));
+assert!(is_float_error(sample_2));
+assert!(!is_float_error(sample_3));
 
-##### Capture an inner segment via multiple patterns
-
-```rust
-let source_str = "long/path/with-a-long-title/details";
-  let target_str = "long";
-  if let Some(inner_segment) = source_str.to_inner_segment(&[("/", 2), ("-", 2)]) {
-    println!("The inner segment between 'a' and 'title' is: '{}'", inner_segment); // should read 'long'
-  }
+// and_not_* and or_* combinators are also available, e.g. to exclude a suffix:
+let is_cat_but_not_psd = "cat-picture.jpg".match_starts_with_ci("cat")
+  .and_not_ends_with_ci(".psd")
+  .result(); // true
 ```
 
 ##### Extract the first decimal value as an f64 from a longer string
@@ -122,15 +137,15 @@ if let Some(price_gbp) = sample_str.to_first_number::<f64>() {
 ##### Extract numeric sequences from phrases and convert them to a vector of floats
 
 ```rust
-// extract European-style numbers with commas as decimal separators and points as thousand separators
+// This crate uses the alphanumeric dependency for advanced number extraction
+// See https://crates.io/crates/alphanumeric for international number format support
 let sample_str = "2.500 grammi di farina costa 9,90€ al supermercato.";
-let numbers: Vec<f32> = sample_str.to_numbers_euro();
+let numbers: Vec<f32> = sample_str.to_numbers();
 // If two valid numbers are matched assume the first is the weight
 if numbers.len() > 1 {
   let weight_grams = numbers[0];
   let price_euros = numbers[1];
   let price_per_kg = price_euros / (weight_grams / 1000f32);
-  // the price in kg should be 3.96
   println!("Flour costs €{:.2} per kilo", price_per_kg);
 }
 ```
@@ -148,20 +163,20 @@ let numbers = sample_str.split_to_numbers::<f64>(",");
 ##### Match by all or any pattern rules without regular expressions
 
 ```rust
-// Call .as_vec() at the end
+// Call .as_vec() to convert the BoundsBuilder to a slice of StringBounds rules
 let mixed_conditions = bounds_builder()
   .containing_ci("nepal")
   .ending_with_ci(".jpg");
 let sample_name_1 = "picture-Nepal-1978.jpg";
-let sample_name_1 = "edited_picture-Nepal-1978.psd";
+let sample_name_2 = "edited_picture-Nepal-1978.psd";
 // contains `nepal` and ends with .jpg
-sample_name_1.match_all_rules(&mixed_conditions); // true
+sample_name_1.match_all_conditional(&mixed_conditions.as_vec()); // true
 // contains `nepal` but does not end with .jpg
-sample_name_2.match_all_rules(&mixed_conditions); // false
+sample_name_2.match_all_conditional(&mixed_conditions.as_vec()); // false
 // contains `nepal` and/or .jpg
-sample_name_1.match_any_rules(&mixed_conditions); // true
+sample_name_1.match_any_conditional(&mixed_conditions.as_vec()); // true
 // contains `nepal` and/or .jpg
-sample_name_2.match_any_rules(&mixed_conditions); // true
+sample_name_2.match_any_conditional(&mixed_conditions.as_vec()); // true
 ```
 
 ##### Filter by all pattern rules without regular expressions
@@ -187,7 +202,7 @@ let nepal_source_files: Vec<&str> = file_names.filter_all_rules(&mixed_condition
 
 ##### Nested Rule Sets
 
-As of verson 0.3.0 you may add nested rule sets with _and_ / _or_ logic. The former case is true only if all conditions are met, while the latter is true if any of the conditions are met. The _BoundsBuilder_ struct now has a set of methods starting with _and_ or _or_. You may call _and(rules: BoundsBuilder)_ or _or(rules: BoundsBuilder)_ directly with a nested rule set if you have a mix of rule types. However, if all rules have the same bounds, other methods accepting a simple array of patterns are available, e.g.
+As of version 0.3.0 you may add nested rule sets with _and_ / _or_ logic. The former case is true only if all conditions are met, while the latter is true if any of the conditions are met. The _BoundsBuilder_ struct now has a set of methods starting with _and_ or _or_. You may call _and(rules: BoundsBuilder)_ or _or(rules: BoundsBuilder)_ directly with a nested rule set if you have a mix of rule types. However, if all rules have the same bounds, other methods accepting a simple array of patterns are available, e.g.
 
 - or_starting_with_ci(patterns: &[&str])
 - or_starting_with_ci_alphanum(patterns: &[&str])
@@ -205,10 +220,10 @@ let filenames = [
 ];
 /// Match files containing the letter sequences "cat" or "dog" and ending in ".jpg" or ".jpeg";
 let rules = bounds_builder()
-  .or_contains_ci(&["cat", "dog"])
-  .or_ends_with_ci(&[".jpg", ".jpeg"]);
+  .or_containing_ci(&["cat", "dog"])
+  .or_ending_with_ci(&[".jpg", ".jpeg"]);
 let matched_files = filenames.filter_all_rules(&rules);
-/// Should yield an array with "my_CaT_2020.jpg" and "daughters_Dog_2023.png"
+/// Should yield an array with "my_CaT_2020.jpg" and "daughters_Dog_2023.jpeg"
 ```
 
 The above example reproduces the following example _regular expression_ /(cat|dog).\*?\.jpe?g$/. The \_alphanum-suffixed variants let match only on numbers and letters within a string, i.e. ignorning any spaces or punctuation.
@@ -236,20 +251,6 @@ let mixed_conditions_jpeg_only = bounds_builder()
   .or(mixed_or_conditions);
 let nepal_and_india_source_files_jpgs: Vec<&str> = file_names.filter_all_rules(&mixed_conditions_jpeg_only);
 // should yield two file names: ["photo_Nepal_Jan-2005.jpg", "image-India-Mar-2003.jpg"]
-```
-
-#### Enclose strings in common bounding characters
-
-```rust
-let sample_phrase = r#"LLM means "large language model""#;
-let phrase_in_round_brackets = sample_phrase.parenthesize();
-// yields (LLM means "large language model")
-// but will not escape any parentheses in the source string.
-let phrase_in_left_right_quotes = sample_phrase.enclose('“', '”');
-// yields “LLM means "large language model"”
-// in custom left and right quotation marks, but will not escape double quotes.
-let phrase_in_double_quotes = sample_phrase.double_quotes_safe();
-// yields “LLM means \"large language model\"" with backslash-escaped double quotes
 ```
 
 #### Filter strings by character categories
@@ -288,31 +289,21 @@ println!("{}", sample_without_spaces_and_punct);
 // should print "Products999perunit£1950each€15onlyZürichcafécañon";
 ```
 
-#### Split a string on any of set of characters
-
-```rust
-let sample_str = "jazz-and-blues_music/section";
-let parts = sample_str.split_on_any_char(&['-','_', '/']);
-// should yield "jazz", "and", "blues", "music", "section" as a vector of strings
-```
-
 ### Traits
 
 | Name               | No. of methods | Method description                                                                                                                                                                                                   |
 | ------------------ | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | MatchOccurrences   | 2              | Return the indices of all ocurrences of an exact string (find_matched_indices) or single character (find_char_indices)                                                                                               |
 | CharGroupMatch     | 6              | Validate strings with character classes, has_digits, has_alphanumeric, has_alphabetic                                                                                                                                |
-| IsNumeric          | 1              | Check if the string may be parsed to an integer or float                                                                                                                                                             |
-| StripCharacters    | 17             | Strip unwanted characters by type or extract vectors of numeric strings, integers or floats without regular expressions                                                                                              |
+| IsNumeric          | 1              | Check if the string may be parsed to an integer or float (from `alphanumeric` dependency)                                                                                                                            |
+| StripCharacters    | 17             | Strip unwanted characters by type or extract vectors of numeric strings, integers or floats without regular expressions (from `alphanumeric` dependency)                                                             |
 | SimpleMatch        | 6              | Match strings without regular expression with common validation rules, e.g. starts_with_ci_alphanum checks if the first letters or numerals in a sample string in case-insensitive mode without regular expressions. |
-| SimpleMatchesMany  | 6              | Regex-free multiple _match_ methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results                                                                           |
-| SimpleMatchAll     | 4              | Regex-free multiple _match_ methods accepting an array of StringBounds items, tuples or patterns and returning a boolean if all are matched                                                                          |
-| SimpleMatchAany    | 4              | Regex-free multiple _match_ methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results                                                                           |
-| SimpleFilterAll    | 2              | Applies simple regex-free multiple _match_ methods to an array or vector of strings and returns a filtered vector of string slices                                                                                   |
-| ToSegments         | 14             | Split strings into parts, segments or head and tail pairs on a separator                                                                                                                                             |
-| ToSegmentFromChars | 3              | Split strings into parts on any of any array of characters                                                                                                                                                           |
-| SimpleEnclose      | 10             | Wrap strings in pairs of matching characters with variants for different escape character rules                                                                                                                      |
-| ToStrings          | 1              | Converts arrays or vectors of strs to a vector of owned strings                                                                                                                                                      |
+| SimpleMatchesMany  | 6              | (**rules feature**) Regex-free multiple _match_ methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results                                                       |
+| SimpleMatchAll     | 4              | (**rules feature**) Regex-free multiple _match_ methods accepting an array of StringBounds items, tuples or patterns and returning a boolean if all are matched                                                      |
+| SimpleMatchAany    | 4              | (**rules feature**) Regex-free multiple _match_ methods accepting an array of StringBounds items, tuples or patterns and returning a vector of boolean results                                                       |
+| SimpleFilterAll    | 2              | (**rules feature**) Applies simple regex-free multiple _match_ methods to an array or vector of strings and returns a filtered vector of string slices                                                               |
+| ToStringMatch      | 12             | (**chain feature**) Entry points (match_contains_ci, match_starts_with_ci_alphanum, etc.) that start a chainable `StringMatch` expression on a string                                                                |
+| StringMatch        | 36             | (**chain feature**) `and_*`/`and_not_*`/`or_*` methods to combine further checks on the same string, plus `.result()` to get the final bool                                                                          |
 
 ### Enums
 
@@ -384,6 +375,11 @@ The _bounds_builder()_ function returns a base instance on which you may chain a
 ### Dev Notes
 
 This crate serves as a building block for other crates as well as to supplement a future version of _string-patterns_. Some updates reflect minor editorial changes.
+
+##### _Version 0.4.0_ streamlines the crate
+
+The `ToSegments`, `ToSegmentFromChars`, `SimpleEnclose` and `ToStrings` traits described in earlier versions of these notes have been removed from this crate and now live in the standalone [to_segments](https://crates.io/crates/to_segments) and [enclose-strings](https://crates.io/crates/enclose-strings) crates (see [Supplementary crates](#supplementary-crates) above). The string bounds rule set (`bounds_builder()`, `StringBounds`, and the `_rules`/`_conditional` methods) is now gated behind the `rules` feature, enabled by default. A new opt-in `chain` feature (disabled by default) adds `StringMatch`, a fluent `match_*`/`and_*`/`or_*` chain for combining several checks on one string — see [Features](#features) and the chaining example above. With every feature disabled, the crate exposes only `SimpleMatch`, `MatchOccurrences` and `SimplContainsType`.
+
 _Version 0.3.13_ introduces the `.strip_spaces()` method as shorthand for `.strip_by_type(CharType::Spaces)`.
 _Version 0.3.11_ introduces a `.split_to_numbers::<T>(pattern: &str)` method to split a string list of numbers into a vector of the specified number type. This is handy when parsing common input formats such as latitudes and longitudes represented as `"42.282,-89.3938"`. This might fail via `.to_numbers()` when commas or points used as separators may be confused with decimal or thousand separators without other characters in between.
 
@@ -409,7 +405,8 @@ This version introduced a set of _and*not*_-prefixed rule methods to filter stri
   /// This should yield ["CAT-pic-912.png", "dOg-photo-876.png", "cats-image-873.webp", "cat-pic-090.jpg"]
 ```
 
-##### *Version 0.3.17* Added new `to_start(separator: &str)` and `to_remainder_start(separator: &str)` method
+##### _Version 0.3.17_ Added new `to_start(separator: &str)` and `to_remainder_start(separator: &str)` method
+
 This version introduced a missing `to_start(&str)` method to return the start of a string before the last occurrence of the separator, i.e. to opposite `to_tail()`. `to_remainder_start()` supplements this method returning start of a string before the last non-final occurrence of a separator, e.g. with the string `one/two/three/`, `to_remainder_start("/")` yields `one/two`, while `to_start("/")` yields `one/two/three`, removing only the trailing slash.
 
 ##### _Version 0.3.16_ expands the range of rules available
